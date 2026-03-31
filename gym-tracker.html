@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Lift" />
+<title>Lift — Gym Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --surface3: #27272f;
+    --border: #2e2e38;
+    --accent: #c8ff00;
+    --accent2: #00e5ff;
+    --danger: #ff4d4d;
+    --text: #f0f0f0;
+    --text2: #9090a0;
+    --text3: #55555f;
+    --radius: 12px;
+    --font-display: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overscroll-behavior: none; }
+  #root { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* NAV */
+  .nav { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .nav-tab { flex: 1; padding: 14px 4px 12px; font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* HEADER */
+  .header { padding: 24px 16px 8px; }
+  .header h1 { font-family: var(--font-display); font-size: 34px; font-weight: 700; letter-spacing: 0.02em; color: var(--text); }
+  .header p { font-size: 14px; color: var(--text2); margin-top: 2px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin: 0 16px 12px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .card-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 8px; font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: none; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+  .btn:active { transform: scale(0.97); }
+  .btn-accent { background: var(--accent); color: #000; }
+  .btn-ghost { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  .btn-sm { padding: 6px 10px; font-size: 12px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* INPUTS */
+  input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-body); font-size: 15px; padding: 10px 12px; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
+  input:focus, select:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--text3); }
+  select option { background: var(--surface2); }
+  label { font-size: 12px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text2); display: block; margin-bottom: 5px; }
+
+  /* FORM GRID */
+  .form-row { margin-bottom: 14px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  /* EXERCISE ITEM */
+  .exercise-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+  .exercise-name { font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: 0.03em; color: var(--text); }
+  .exercise-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; background: var(--surface3); border-radius: 6px; padding: 4px 8px; font-family: var(--font-mono); font-size: 12px; color: var(--text2); }
+  .pill.accent { background: rgba(200, 255, 0, 0.1); color: var(--accent); }
+  .pill.info { background: rgba(0, 229, 255, 0.1); color: var(--accent2); }
+
+  /* DAY SECTION */
+  .day-section { margin: 0 16px 20px; }
+  .day-label { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text); padding: 16px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .day-label span { font-size: 13px; color: var(--text2); font-weight: 400; }
+
+  /* MODAL */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: flex; align-items: flex-end; }
+  .modal { background: var(--surface); border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px 40px; }
+  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.03em; margin-bottom: 20px; }
+
+  /* PROGRESS */
+  .history-entry { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .history-date { font-family: var(--font-mono); font-size: 12px; color: var(--text3); min-width: 80px; }
+  .history-data { font-family: var(--font-mono); font-size: 14px; color: var(--text); }
+  .history-delta { font-size: 12px; font-family: var(--font-mono); }
+  .delta-up { color: var(--accent); }
+  .delta-dn { color: var(--danger); }
+
+  /* SECTION PAD */
+  .section { padding-bottom: 80px; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 48px 24px; color: var(--text3); font-size: 15px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  /* TAG ROW */
+  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .tag { background: var(--surface3); border-radius: 6px; padding: 4px 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text2); cursor: pointer; border: 1px solid transparent; transition: border-color 0.15s; }
+  .tag.selected { border-color: var(--accent); color: var(--accent); background: rgba(200,255,0,0.08); }
+
+  /* INLINE ACTIONS */
+  .row-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+  /* NUMBER INPUT STEPPER */
+  .stepper { display: flex; align-items: center; gap: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .stepper input { border: none; border-radius: 0; text-align: center; width: 60px; flex: 1; }
+  .stepper input:focus { border: none; box-shadow: none; }
+  .stepper-btn { background: var(--surface3); border: none; color: var(--text); width: 40px; height: 42px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+  .stepper-btn:active { background: var(--border); }
+
+  /* SESSION LOG BTN */
+  .log-btn { width: calc(100% - 32px); margin: 0 16px 12px; padding: 14px; font-size: 16px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: 0.05em; padding: 10px 20px; border-radius: 100px; z-index: 300; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* FAB */
+  .fab { position: fixed; bottom: 24px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 150; box-shadow: 0 4px 20px rgba(200,255,0,0.3); transition: transform 0.15s; }
+  .fab:active { transform: scale(0.93); }
+  .fab svg { width: 24px; height: 24px; }
+
+  /* CHART BARS */
+  .bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; margin-top: 12px; }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .bar { width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; transition: height 0.4s; min-height: 3px; }
+  .bar-label { font-family: var(--font-mono); font-size: 10px; color: var(--text3); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .bar-val { font-family: var(--font-mono); font-size: 10px; color: var(--accent); text-align: center; }
+
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ── localStorage helpers ──────────────────────────────────────────────────────
+const STORE_KEY = 'lift_data_v2';
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch { return {}; }
+}
+function save(data) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+}
+
+const INITIAL = {
+  routine: {},   // { "1": { name: "Push Day", exercises: [{id, name, minSets, maxSets, minReps, maxReps}] } }
+  sessions: [],  // [{ id, date, dayNum, entries: [{exerciseId, sets, reps, weight}] }]
+  targets: {},   // { exerciseId: { sets, reps, weight } }
+};
+
+const uuid = () => Math.random().toString(36).slice(2, 9);
+const fmt = d => new Date(d).toLocaleDateString('en-GB', {day:'numeric',month:'short'});
+const DAYS = ['1','2','3','4','5'];
+
+// ── Stepper ───────────────────────────────────────────────────────────────────
+function Stepper({ value, onChange, min=0, max=999, step=1 }) {
+  return (
+    <div className="stepper">
+      <button className="stepper-btn" onClick={() => onChange(Math.max(min, (parseFloat(value)||0) - step))}>−</button>
+      <input type="number" value={value} min={min} max={max} step={step}
+        onChange={e => onChange(parseFloat(e.target.value)||0)} />
+      <button className="stepper-btn" onClick={() => onChange(Math.min(max, (parseFloat(value)||0) + step))}>+</button>
+    </div>
+  );
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function Toast({ msg }) {
+  return <div className={`toast${msg ? ' show' : ''}`}>{msg}</div>;
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+function App() {
+  const [data, setData] = useState(() => ({ ...INITIAL, ...load() }));
+  const [tab, setTab] = useState('today');
+  const [toast, setToast] = useState('');
+  const toastTimer = useRef();
+
+  const persist = useCallback(d => { setData(d); save(d); }, []);
+
+  function showToast(msg) {
+    clearTimeout(toastTimer.current);
+    setToast(msg);
+    toastTimer.current = setTimeout(() => setToast(''), 2200);
+  }
+
+  return (
+    <div>
+      <nav className="nav">
+        {[['today','Today'],['routine','Routine'],['history','History']].map(([k,v]) => (
+          <button key={k} className={`nav-tab${tab===k?' active':''}`} onClick={() => setTab(k)}>{v}</button>
+        ))}
+      </nav>
+      {tab === 'today'   && <TodayTab   data={data} persist={persist} showToast={showToast} />}
+      {tab === 'routine' && <RoutineTab data={data} persist={persist} showToast={showToast} />}
+      {tab === 'history' && <HistoryTab data={data} persist={persist} showToast={showToast} />}
+      <Toast msg={toast} />
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TODAY TAB
+// ══════════════════════════════════════════════════════════════════════════════
+function TodayTab({ data, persist, showToast }) {
+  const dayNums = Object.keys(data.routine).sort();
+  const [activeDay, setActiveDay] = useState(dayNums[0] || '1');
+  const [logModal, setLogModal] = useState(null); // exerciseId
+  const [sessionModal, setSessionModal] = useState(false);
+
+  const exercises = data.routine[activeDay]?.exercises || [];
+
+  function getLatestEntry(exerciseId) {
+    for (let i = data.sessions.length - 1; i >= 0; i--) {
+      const s = data.sessions[i];
+      if (String(s.dayNum) === String(activeDay)) {
+        const e = s.entries?.find(e => e.exerciseId === exerciseId);
+        if (e) return { ...e, date: s.date };
+      }
+    }
+    return null;
+  }
+
+  function getTarget(exerciseId) {
+    return data.targets[exerciseId] || {};
+  }
+
+  function saveTarget(exerciseId, field, val) {
+    const updated = {
+      ...data,
+      targets: {
+        ...data.targets,
+        [exerciseId]: { ...(data.targets[exerciseId]||{}), [field]: val }
+      }
+    };
+    persist(updated);
+  }
+
+  function logSession(entries) {
+    const session = {
+      id: uuid(),
+      date: new Date().toISOString(),
+      dayNum: activeDay,
+      entries,
+    };
+    const updated = { ...data, sessions: [...data.sessions, session] };
+    persist(updated);
+    setSessionModal(false);
+    showToast('Session logged!');
+  }
+
+  if (dayNums.length === 0) return (
+    <div className="section">
+      <div className="header"><h1>Today</h1></div>
+      <div className="empty">
+        <div className="empty-icon">🏋️</div>
+        <p>No routine set up yet.<br/>Head to <b>Routine</b> to build your week.</p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="section">
+      <div className="header"><h1>Today</h1><p>Select your training day</p></div>
+
+      {/* Day selector */}
+      <div style={{padding:'0 16px 4px', display:'flex', gap:'8px', overflowX:'auto'}}>
+        {dayNums.map(d => (
+          <button key={d} onClick={() => setActiveDay(d)}
+            style={{
+              flexShrink:0, padding:'8px 16px', borderRadius:'8px', border:'1px solid',
+              fontFamily:'var(--font-display)', fontWeight:600, fontSize:'14px', letterSpacing:'0.05em',
+              cursor:'pointer', transition:'all 0.15s',
+              background: activeDay===d ? 'var(--accent)' : 'var(--surface2)',
+              color: activeDay===d ? '#000' : 'var(--text2)',
+              borderColor: activeDay===d ? 'var(--accent)' : 'var(--border)',
+            }}>
+            Day {d}
+            {data.routine[d]?.name ? <span style={{display:'block', fontSize:'10px', fontWeight:400, opacity:0.7}}>{data.routine[d].name}</span> : null}
+          </button>
+        ))}
+      </div>
+
+      <div style={{padding:'16px 16px 0'}}>
+        {exercises.length === 0 ? (
+          <div className="empty"><p>No exercises in Day {activeDay}.</p></div>
+        ) : exercises.map(ex => {
+          const latest = getLatestEntry(ex.id);
+          const target = getTarget(ex.id);
+          return (
+            <div key={ex.id} className="exercise-item">
+              <div className="exercise-name">{ex.name}</div>
+              <div className="exercise-meta">
+                <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets × {ex.minReps}–{ex.maxReps} reps</span>
+              </div>
+              {latest && (
+                <div style={{marginTop:10, padding:'8px 10px', background:'var(--surface3)', borderRadius:8}}>
+                  <div style={{fontSize:11, color:'var(--text3)', fontFamily:'var(--font-mono)', marginBottom:4}}>LAST · {fmt(latest.date)}</div>
+                  <div style={{fontFamily:'var(--font-mono)', fontSize:15, color:'var(--text)'}}>
+                    {latest.sets} sets × {latest.reps} reps
+                    {latest.weight ? <span style={{color:'var(--accent2)'}}> @ {latest.weight}kg</span> : null}
+                  </div>
+                </div>
+              )}
+              <div style={{marginTop:10}}>
+                <div style={{fontSize:11, color:'var(--text3)', fontFamily:'var(--font-display)', fontWeight:600, letterSpacing:'0.06em', marginBottom:8}}>TARGET FOR NEXT SESSION</div>
+                <div className="form-grid-3" style={{gap:8}}>
+                  <div>
+                    <label>Sets</label>
+                    <Stepper value={target.sets ?? ex.minSets} min={ex.minSets} max={ex.maxSets}
+                      onChange={v => saveTarget(ex.id, 'sets', v)} />
+                  </div>
+                  <div>
+                    <label>Reps</label>
+                    <Stepper value={target.reps ?? ex.minReps} min={ex.minReps} max={ex.maxReps}
+                      onChange={v => saveTarget(ex.id, 'reps', v)} />
+                  </div>
+                  <div>
+                    <label>Weight (kg)</label>
+                    <Stepper value={target.weight ?? (latest?.weight || 0)} step={2.5}
+                      onChange={v => saveTarget(ex.id, 'weight', v)} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {exercises.length > 0 && (
+        <button className="btn btn-accent log-btn" onClick={() => setSessionModal(true)}>
+          ✓ Log Session
+        </button>
+      )}
+
+      {sessionModal && (
+        <LogSessionModal
+          exercises={exercises}
+          targets={data.targets}
+          getLatest={getLatestEntry}
+          dayNum={activeDay}
+          dayName={data.routine[activeDay]?.name}
+          onClose={() => setSessionModal(false)}
+          onSave={logSession}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Log Session Modal ─────────────────────────────────────────────────────────
+function LogSessionModal({ exercises, targets, getLatest, dayNum, dayName, onClose, onSave }) {
+  const [entries, setEntries] = useState(() =>
+    exercises.map(ex => {
+      const t = targets[ex.id] || {};
+      const l = getLatest(ex.id);
+      return {
+        exerciseId: ex.id,
+        name: ex.name,
+        sets: t.sets ?? ex.minSets,
+        reps: t.reps ?? ex.minReps,
+        weight: t.weight ?? (l?.weight || 0),
+      };
+    })
+  );
+
+  function update(i, field, val) {
+    setEntries(prev => prev.map((e, idx) => idx === i ? { ...e, [field]: val } : e));
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-handle" />
+        <div className="modal-title">Log Day {dayNum}{dayName ? ` · ${dayName}` : ''}</div>
+        {entries.map((entry, i) => {
+          const ex = exercises[i];
+          return (
+            <div key={entry.exerciseId} style={{marginBottom:20}}>
+              <div style={{fontFamily:'var(--font-display)', fontSize:17, fontWeight:600, color:'var(--text)', marginBottom:10}}>{entry.name}</div>
+              <div className="form-grid-3">
+                <div>
+                  <label>Sets</label>
+                  <Stepper value={entry.sets} min={ex.minSets} max={ex.maxSets} onChange={v => update(i,'sets',v)} />
+                </div>
+                <div>
+                  <label>Reps</label>
+                  <Stepper value={entry.reps} min={ex.minReps} max={ex.maxReps} onChange={v => update(i,'reps',v)} />
+                </div>
+                <div>
+                  <label>Weight (kg)</label>
+                  <Stepper value={entry.weight} step={2.5} onChange={v => update(i,'weight',v)} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <button className="btn btn-accent" style={{width:'100%',padding:'14px',fontSize:'16px',marginTop:8}} onClick={() => onSave(entries)}>
+          Save Session
+        </button>
+        <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ROUTINE TAB
+// ══════════════════════════════════════════════════════════════════════════════
+function RoutineTab({ data, persist, showToast }) {
+  const [addModal, setAddModal] = useState(null); // dayNum
+  const [editDayModal, setEditDayModal] = useState(null); // dayNum
+  const [addDayModal, setAddDayModal] = useState(false);
+
+  const dayNums = Object.keys(data.routine).sort();
+
+  function addDay(name) {
+    const existing = Object.keys(data.routine).map(Number);
+    const next = existing.length > 0 ? Math.max(...existing) + 1 : 1;
+    if (next > 5) return;
+    const updated = { ...data, routine: { ...data.routine, [String(next)]: { name, exercises: [] } } };
+    persist(updated);
+    setAddDayModal(false);
+    showToast(`Day ${next} added!`);
+  }
+
+  function removeDay(dayNum) {
+    const r = { ...data.routine };
+    delete r[dayNum];
+    // renumber
+    const sorted = Object.keys(r).sort();
+    const renumbered = {};
+    sorted.forEach((k, i) => { renumbered[String(i+1)] = r[k]; });
+    persist({ ...data, routine: renumbered });
+    showToast('Day removed');
+  }
+
+  function addExercise(dayNum, ex) {
+    const day = data.routine[dayNum] || { name: '', exercises: [] };
+    const updated = {
+      ...data,
+      routine: {
+        ...data.routine,
+        [dayNum]: { ...day, exercises: [...day.exercises, { ...ex, id: uuid() }] }
+      }
+    };
+    persist(updated);
+    setAddModal(null);
+    showToast('Exercise added!');
+  }
+
+  function removeExercise(dayNum, exId) {
+    const day = data.routine[dayNum];
+    const updated = {
+      ...data,
+      routine: {
+        ...data.routine,
+        [dayNum]: { ...day, exercises: day.exercises.filter(e => e.id !== exId) }
+      }
+    };
+    persist(updated);
+    showToast('Exercise removed');
+  }
+
+  function renamDay(dayNum, name) {
+    const updated = { ...data, routine: { ...data.routine, [dayNum]: { ...data.routine[dayNum], name } } };
+    persist(updated);
+    setEditDayModal(null);
+  }
+
+  return (
+    <div className="section">
+      <div className="header" style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+        <div><h1>Routine</h1><p>Up to 5 days per week</p></div>
+        {dayNums.length < 5 && (
+          <button className="btn btn-accent btn-sm" onClick={() => setAddDayModal(true)}>+ Day</button>
+        )}
+      </div>
+
+      {dayNums.length === 0 && (
+        <div className="empty">
+          <div className="empty-icon">📋</div>
+          <p>No days yet.<br/>Add your first training day.</p>
+        </div>
+      )}
+
+      {dayNums.map(d => (
+        <div key={d} className="day-section">
+          <div className="day-label">
+            <span>Day {d}{data.routine[d]?.name ? ` — ${data.routine[d].name}` : ''}</span>
+            <div style={{display:'flex', gap:8}}>
+              <button className="btn btn-ghost btn-sm" onClick={() => setEditDayModal(d)}>✏️</button>
+              <button className="btn btn-danger btn-sm" onClick={() => removeDay(d)}>✕</button>
+            </div>
+          </div>
+          {(data.routine[d]?.exercises || []).map(ex => (
+            <div key={ex.id} className="exercise-item">
+              <div style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between'}}>
+                <div>
+                  <div className="exercise-name">{ex.name}</div>
+                  <div className="exercise-meta">
+                    <span className="pill accent">{ex.minSets}–{ex.maxSets} sets</span>
+                    <span className="pill info">{ex.minReps}–{ex.maxReps} reps</span>
+                  </div>
+                </div>
+                <button className="btn btn-danger btn-sm" style={{marginLeft:8, flexShrink:0}} onClick={() => removeExercise(d, ex.id)}>✕</button>
+              </div>
+            </div>
+          ))}
+          <button className="btn btn-ghost" style={{width:'100%', marginTop:4}} onClick={() => setAddModal(d)}>
+            + Add Exercise to Day {d}
+          </button>
+        </div>
+      ))}
+
+      {addDayModal && (
+        <AddDayModal onClose={() => setAddDayModal(false)} onSave={addDay} nextDay={dayNums.length+1} />
+      )}
+      {addModal && (
+        <AddExerciseModal dayNum={addModal} onClose={() => setAddModal(null)} onSave={ex => addExercise(addModal, ex)} />
+      )}
+      {editDayModal && (
+        <EditDayModal dayNum={editDayModal} currentName={data.routine[editDayModal]?.name||''} onClose={() => setEditDayModal(null)} onSave={name => renamDay(editDayModal, name)} />
+      )}
+    </div>
+  );
+}
+
+function AddDayModal({ onClose, onSave, nextDay }) {
+  const [name, setName] = useState('');
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-handle" />
+        <div className="modal-title">Add Day {nextDay}</div>
+        <div className="form-row">
+          <label>Day Name (optional)</label>
+          <input placeholder="e.g. Push Day, Legs..." value={name} onChange={e => setName(e.target.value)} />
+        </div>
+        <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={() => onSave(name)}>Add Day</button>
+        <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+function EditDayModal({ dayNum, currentName, onClose, onSave }) {
+  const [name, setName] = useState(currentName);
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-handle" />
+        <div className="modal-title">Rename Day {dayNum}</div>
+        <div className="form-row">
+          <label>Day Name</label>
+          <input value={name} onChange={e => setName(e.target.value)} />
+        </div>
+        <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={() => onSave(name)}>Save</button>
+        <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+function AddExerciseModal({ dayNum, onClose, onSave }) {
+  const [name, setName] = useState('');
+  const [minSets, setMinSets] = useState(3);
+  const [maxSets, setMaxSets] = useState(4);
+  const [minReps, setMinReps] = useState(8);
+  const [maxReps, setMaxReps] = useState(12);
+  const [err, setErr] = useState('');
+
+  const PRESETS = ['Bench Press','Squat','Deadlift','OHP','Pull-ups','Rows','Lunges','Curls','Tricep Dips','Lat Pulldown','Leg Press','Cable Fly'];
+
+  function submit() {
+    if (!name.trim()) { setErr('Exercise name required'); return; }
+    if (minSets > maxSets) { setErr('Min sets > max sets'); return; }
+    if (minReps > maxReps) { setErr('Min reps > max reps'); return; }
+    onSave({ name: name.trim(), minSets, maxSets, minReps, maxReps });
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-handle" />
+        <div className="modal-title">Add Exercise — Day {dayNum}</div>
+
+        <div className="form-row">
+          <label>Exercise Name</label>
+          <input placeholder="e.g. Bench Press" value={name} onChange={e => { setName(e.target.value); setErr(''); }} />
+          <div className="tag-row">
+            {PRESETS.map(p => (
+              <span key={p} className={`tag${name===p?' selected':''}`} onClick={() => setName(p)}>{p}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="form-row">
+          <label>Sets Range</label>
+          <div className="form-grid">
+            <div>
+              <label>Min Sets</label>
+              <Stepper value={minSets} min={1} max={maxSets} onChange={v => setMinSets(v)} />
+            </div>
+            <div>
+              <label>Max Sets</label>
+              <Stepper value={maxSets} min={minSets} max={10} onChange={v => setMaxSets(v)} />
+            </div>
+          </div>
+        </div>
+
+        <div className="form-row">
+          <label>Reps Range</label>
+          <div className="form-grid">
+            <div>
+              <label>Min Reps</label>
+              <Stepper value={minReps} min={1} max={maxReps} onChange={v => setMinReps(v)} />
+            </div>
+            <div>
+              <label>Max Reps</label>
+              <Stepper value={maxReps} min={minReps} max={50} onChange={v => setMaxReps(v)} />
+            </div>
+          </div>
+        </div>
+
+        {err && <div style={{color:'var(--danger)', fontSize:13, marginBottom:12}}>{err}</div>}
+
+        <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={submit}>Add Exercise</button>
+        <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CSV EXPORT / IMPORT
+// ══════════════════════════════════════════════════════════════════════════════
+function exportCSV(data) {
+  // Two sheets in one file, separated by a blank line
+  // Sheet 1: Routine
+  const routineRows = [['sheet','day_num','day_name','exercise_id','exercise_name','min_sets','max_sets','min_reps','max_reps']];
+  Object.entries(data.routine).forEach(([dayNum, day]) => {
+    (day.exercises || []).forEach(ex => {
+      routineRows.push(['routine', dayNum, day.name || '', ex.id, ex.name, ex.minSets, ex.maxSets, ex.minReps, ex.maxReps]);
+    });
+  });
+
+  // Sheet 2: Sessions
+  const sessionRows = [['sheet','session_id','date','day_num','exercise_id','sets','reps','weight_kg']];
+  data.sessions.forEach(s => {
+    (s.entries || []).forEach(e => {
+      sessionRows.push(['session', s.id, s.date, s.dayNum, e.exerciseId, e.sets, e.reps, e.weight ?? '']);
+    });
+  });
+
+  // Sheet 3: Targets
+  const targetRows = [['sheet','exercise_id','target_sets','target_reps','target_weight_kg']];
+  Object.entries(data.targets || {}).forEach(([exId, t]) => {
+    targetRows.push(['target', exId, t.sets ?? '', t.reps ?? '', t.weight ?? '']);
+  });
+
+  const toCSV = rows => rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const csv = toCSV(routineRows) + '\n\n' + toCSV(sessionRows) + '\n\n' + toCSV(targetRows);
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lift-backup-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function parseCSV(text) {
+  // Split into the three blocks separated by blank lines
+  const blocks = text.trim().split(/\n\s*\n/);
+  function parseBlock(block) {
+    const lines = block.trim().split('\n');
+    if (!lines.length) return [];
+    const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g,'').trim());
+    return lines.slice(1).map(line => {
+      // Handle quoted fields properly
+      const vals = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { vals.push(cur); cur = ''; }
+        else { cur += c; }
+      }
+      vals.push(cur);
+      const row = {};
+      headers.forEach((h, i) => { row[h] = vals[i] ?? ''; });
+      return row;
+    });
+  }
+
+  const routineRows = blocks[0] ? parseBlock(blocks[0]) : [];
+  const sessionRows = blocks[1] ? parseBlock(blocks[1]) : [];
+  const targetRows  = blocks[2] ? parseBlock(blocks[2]) : [];
+
+  // Reconstruct routine
+  const routine = {};
+  routineRows.filter(r => r.sheet === 'routine').forEach(r => {
+    if (!routine[r.day_num]) routine[r.day_num] = { name: r.day_name, exercises: [] };
+    routine[r.day_num].exercises.push({
+      id: r.exercise_id,
+      name: r.exercise_name,
+      minSets: Number(r.min_sets),
+      maxSets: Number(r.max_sets),
+      minReps: Number(r.min_reps),
+      maxReps: Number(r.max_reps),
+    });
+  });
+
+  // Reconstruct sessions
+  const sessMap = {};
+  sessionRows.filter(r => r.sheet === 'session').forEach(r => {
+    if (!sessMap[r.session_id]) sessMap[r.session_id] = { id: r.session_id, date: r.date, dayNum: r.day_num, entries: [] };
+    sessMap[r.session_id].entries.push({
+      exerciseId: r.exercise_id,
+      sets: Number(r.sets),
+      reps: Number(r.reps),
+      weight: r.weight_kg !== '' ? Number(r.weight_kg) : 0,
+    });
+  });
+  const sessions = Object.values(sessMap);
+
+  // Reconstruct targets
+  const targets = {};
+  targetRows.filter(r => r.sheet === 'target').forEach(r => {
+    targets[r.exercise_id] = {
+      sets:   r.target_sets   !== '' ? Number(r.target_sets)   : undefined,
+      reps:   r.target_reps   !== '' ? Number(r.target_reps)   : undefined,
+      weight: r.target_weight_kg !== '' ? Number(r.target_weight_kg) : undefined,
+    };
+  });
+
+  return { routine, sessions, targets };
+}
+
+function DataModal({ data, persist, onClose, showToast }) {
+  const fileRef = useRef();
+  const [importing, setImporting] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [err, setErr] = useState('');
+
+  function handleExport() {
+    exportCSV(data);
+    showToast('CSV exported!');
+  }
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setErr('');
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const parsed = parseCSV(ev.target.result);
+        const dayCount = Object.keys(parsed.routine).length;
+        const sessCount = parsed.sessions.length;
+        if (dayCount === 0 && sessCount === 0) { setErr('No valid data found in file.'); return; }
+        setPreview({ parsed, dayCount, sessCount });
+      } catch(ex) {
+        setErr('Could not parse file. Make sure it was exported from Lift.');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function confirmImport() {
+    persist({ ...INITIAL, ...preview.parsed });
+    onClose();
+    showToast('Data imported!');
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-handle" />
+        <div className="modal-title">Data Backup</div>
+
+        <div style={{marginBottom:20, padding:'14px', background:'var(--surface2)', borderRadius:10, border:'1px solid var(--border)'}}>
+          <div style={{fontFamily:'var(--font-display)', fontWeight:600, fontSize:14, letterSpacing:'0.05em', color:'var(--text)', marginBottom:6}}>EXPORT</div>
+          <div style={{fontSize:13, color:'var(--text2)', marginBottom:12}}>Download all your routine and session data as a CSV file. Use this to back up or transfer to another device.</div>
+          <button className="btn btn-accent" style={{width:'100%'}} onClick={handleExport}>↓ Export CSV</button>
+        </div>
+
+        <div style={{padding:'14px', background:'var(--surface2)', borderRadius:10, border:'1px solid var(--border)'}}>
+          <div style={{fontFamily:'var(--font-display)', fontWeight:600, fontSize:14, letterSpacing:'0.05em', color:'var(--text)', marginBottom:6}}>IMPORT</div>
+          <div style={{fontSize:13, color:'var(--text2)', marginBottom:12}}>Load a previously exported Lift CSV. <span style={{color:'var(--danger)', fontWeight:500}}>This will replace all current data.</span></div>
+          <button className="btn btn-ghost" style={{width:'100%'}} onClick={() => fileRef.current.click()}>↑ Choose CSV File</button>
+          <input ref={fileRef} type="file" accept=".csv,text/csv" style={{display:'none'}} onChange={handleFileChange} />
+
+          {err && <div style={{color:'var(--danger)', fontSize:13, marginTop:10}}>{err}</div>}
+
+          {preview && (
+            <div style={{marginTop:14, padding:'12px', background:'var(--surface3)', borderRadius:8, border:'1px solid var(--border)'}}>
+              <div style={{fontSize:13, color:'var(--text2)', marginBottom:10}}>
+                Found <span style={{color:'var(--accent)', fontWeight:600}}>{preview.dayCount} day{preview.dayCount!==1?'s':''}</span> and <span style={{color:'var(--accent)', fontWeight:600}}>{preview.sessCount} session{preview.sessCount!==1?'s':''}</span> — ready to import.
+              </div>
+              <button className="btn btn-accent" style={{width:'100%'}} onClick={confirmImport}>Confirm Import</button>
+            </div>
+          )}
+        </div>
+
+        <button className="btn btn-ghost" style={{width:'100%', padding:'14px', marginTop:12}} onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HISTORY TAB
+// ══════════════════════════════════════════════════════════════════════════════
+function HistoryTab({ data, persist, showToast }) {
+  const dayNums = Object.keys(data.routine).sort();
+  const [selectedDay, setSelectedDay] = useState(dayNums[0] || null);
+  const [selectedExId, setSelectedExId] = useState(null);
+  const [dataModal, setDataModal] = useState(false);
+
+  const exercises = selectedDay ? (data.routine[selectedDay]?.exercises || []) : [];
+
+  useEffect(() => {
+    setSelectedExId(exercises[0]?.id || null);
+  }, [selectedDay]);
+
+  const selectedEx = exercises.find(e => e.id === selectedExId);
+
+  // sessions for this day, sorted ascending
+  const dayHistory = data.sessions
+    .filter(s => String(s.dayNum) === String(selectedDay))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const entries = selectedExId
+    ? dayHistory.map(s => ({ date: s.date, ...s.entries?.find(e => e.exerciseId === selectedExId) })).filter(e => e.sets)
+    : [];
+
+  // chart: weight over time
+  const maxWeight = entries.length ? Math.max(...entries.map(e => e.weight || 0), 1) : 1;
+
+  if (dayNums.length === 0) return (
+    <div className="section">
+      <div className="header" style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between'}}>
+        <div><h1>History</h1></div>
+        <button className="btn btn-ghost btn-sm" style={{marginTop:6}} onClick={() => setDataModal(true)}>⇅ Backup</button>
+      </div>
+      <div className="empty"><div className="empty-icon">📈</div><p>No data yet.<br/>Log some sessions first.</p></div>
+      {dataModal && <DataModal data={data} persist={persist} onClose={() => setDataModal(false)} showToast={showToast} />}
+    </div>
+  );
+
+  return (
+    <div className="section">
+      <div className="header" style={{display:'flex', alignItems:'flex-start', justifyContent:'space-between'}}>
+        <div><h1>History</h1><p>Track your progress over time</p></div>
+        <button className="btn btn-ghost btn-sm" style={{marginTop:6}} onClick={() => setDataModal(true)}>⇅ Backup</button>
+      </div>
+
+      {/* Day selector */}
+      <div style={{padding:'0 16px 12px', display:'flex', gap:'8px', overflowX:'auto'}}>
+        {dayNums.map(d => (
+          <button key={d} onClick={() => setSelectedDay(d)}
+            style={{
+              flexShrink:0, padding:'8px 16px', borderRadius:'8px', border:'1px solid',
+              fontFamily:'var(--font-display)', fontWeight:600, fontSize:'13px', letterSpacing:'0.05em',
+              cursor:'pointer', transition:'all 0.15s',
+              background: selectedDay===d ? 'var(--accent)' : 'var(--surface2)',
+              color: selectedDay===d ? '#000' : 'var(--text2)',
+              borderColor: selectedDay===d ? 'var(--accent)' : 'var(--border)',
+            }}>
+            Day {d}
+          </button>
+        ))}
+      </div>
+
+      {/* Exercise selector */}
+      {exercises.length > 0 && (
+        <div style={{padding:'0 16px 16px', display:'flex', gap:'8px', overflowX:'auto'}}>
+          {exercises.map(ex => (
+            <button key={ex.id} onClick={() => setSelectedExId(ex.id)}
+              style={{
+                flexShrink:0, padding:'6px 14px', borderRadius:'8px', border:'1px solid',
+                fontFamily:'var(--font-body)', fontSize:'13px', cursor:'pointer', transition:'all 0.15s',
+                background: selectedExId===ex.id ? 'var(--surface3)' : 'transparent',
+                color: selectedExId===ex.id ? 'var(--accent2)' : 'var(--text2)',
+                borderColor: selectedExId===ex.id ? 'var(--accent2)' : 'var(--border)',
+              }}>
+              {ex.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {selectedEx && (
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">{selectedEx.name}</div>
+            {entries.length > 0 && (
+              <span className="pill accent">{entries.length} session{entries.length!==1?'s':''}</span>
+            )}
+          </div>
+
+          {entries.length === 0 ? (
+            <div style={{color:'var(--text3)', fontSize:14, textAlign:'center', padding:'20px 0'}}>No sessions logged for this exercise yet.</div>
+          ) : (
+            <>
+              {/* Weight chart */}
+              {entries.some(e => e.weight > 0) && (
+                <div style={{marginBottom:16}}>
+                  <div style={{fontSize:11, fontFamily:'var(--font-display)', fontWeight:600, letterSpacing:'0.06em', color:'var(--text3)', marginBottom:6}}>WEIGHT OVER TIME (kg)</div>
+                  <div className="bar-chart scroll-x" style={{minWidth: entries.length * 36}}>
+                    {entries.map((e, i) => {
+                      const h = maxWeight > 0 ? Math.max(4, Math.round((e.weight / maxWeight) * 72)) : 4;
+                      return (
+                        <div key={i} className="bar-wrap" style={{minWidth:30}}>
+                          <div className="bar-val">{e.weight || ''}</div>
+                          <div className="bar" style={{height: h + 'px'}} />
+                          <div className="bar-label">{fmt(e.date)}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Entry list */}
+              {[...entries].reverse().map((e, i) => {
+                const prev = entries[entries.length - 1 - i - 1];
+                const delta = prev && e.weight != null && prev.weight != null ? e.weight - prev.weight : null;
+                return (
+                  <div key={i} className="history-entry">
+                    <div className="history-date">{fmt(e.date)}</div>
+                    <div className="history-data">
+                      {e.sets}×{e.reps}
+                      {e.weight ? <span style={{color:'var(--accent2)'}}> @ {e.weight}kg</span> : null}
+                    </div>
+                    {delta !== null && delta !== 0 && (
+                      <div className={`history-delta ${delta > 0 ? 'delta-up' : 'delta-dn'}`}>
+                        {delta > 0 ? '▲' : '▼'} {Math.abs(delta)}kg
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* All sessions summary */}
+      <div className="card" style={{marginTop:0}}>
+        <div className="card-header"><div className="card-title">All Sessions</div></div>
+        {data.sessions.length === 0 ? (
+          <div style={{color:'var(--text3)', fontSize:14, textAlign:'center', padding:'12px 0'}}>No sessions logged yet.</div>
+        ) : [...data.sessions].reverse().map(s => (
+          <div key={s.id} style={{padding:'10px 0', borderBottom:'1px solid var(--border)', display:'flex', gap:12, alignItems:'baseline'}}>
+            <div style={{fontFamily:'var(--font-mono)', fontSize:12, color:'var(--text3)', minWidth:80}}>{fmt(s.date)}</div>
+            <div>
+              <span style={{fontFamily:'var(--font-display)', fontWeight:600, fontSize:13, color:'var(--accent)'}}>Day {s.dayNum}</span>
+              {data.routine[s.dayNum]?.name && <span style={{color:'var(--text2)', fontSize:13}}> · {data.routine[s.dayNum].name}</span>}
+              <div style={{fontSize:12, color:'var(--text3)', marginTop:2}}>
+                {(s.entries||[]).map(e => {
+                  const ex = (data.routine[s.dayNum]?.exercises||[]).find(x => x.id === e.exerciseId);
+                  return ex ? `${ex.name} ${e.sets}×${e.reps}${e.weight ? ` @${e.weight}kg` : ''}` : null;
+                }).filter(Boolean).join(' · ')}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {dataModal && <DataModal data={data} persist={persist} onClose={() => setDataModal(false)} showToast={showToast} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
