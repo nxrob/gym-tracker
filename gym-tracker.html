@@ -1,101 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Lift" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Lift"/>
 <title>Lift — Gym Tracker</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0d0d0f;
-    --surface: #16161a;
-    --surface2: #1e1e24;
-    --surface3: #27272f;
-    --border: #2e2e38;
-    --accent: #c8ff00;
-    --accent2: #00e5ff;
-    --danger: #ff4d4d;
-    --text: #f0f0f0;
-    --text2: #9090a0;
-    --text3: #55555f;
-    --radius: 12px;
-    --font-display: 'Barlow Condensed', sans-serif;
-    --font-body: 'Barlow', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; overscroll-behavior: none; }
-  #root { max-width: 480px; margin: 0 auto; min-height: 100vh; }
-
-  .page { min-height: 100vh; padding-bottom: 48px; }
-
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: 8px; font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: none; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
-  .btn:active { transform: scale(0.97); }
-  .btn-accent { background: var(--accent); color: #000; }
-  .btn-ghost { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
-  .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
-  .btn-sm { padding: 6px 10px; font-size: 12px; }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--font-body); font-size: 15px; padding: 10px 12px; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
-  input:focus, select:focus { border-color: var(--accent); }
-  input::placeholder { color: var(--text3); }
-  select option { background: var(--surface2); }
-  label { font-size: 12px; font-family: var(--font-display); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text2); display: block; margin-bottom: 5px; }
-
-  .form-row { margin-bottom: 14px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.78); z-index: 200; display: flex; align-items: flex-end; }
-  .modal-backdrop.center { align-items: center; padding: 20px; }
-  .modal { background: var(--surface); border-radius: 20px 20px 0 0; border-top: 1px solid var(--border); width: 100%; max-height: 92vh; overflow-y: auto; padding: 20px 16px 52px; }
-  .modal.center-modal { border-radius: 16px; border: 1px solid var(--border); max-height: 82vh; padding: 20px 16px 28px; }
-  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
-  .modal-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.03em; margin-bottom: 4px; }
-  .modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
-
-  .exercise-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
-  .exercise-name { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: 0.03em; color: var(--text); }
-  .exercise-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-  .pill { display: inline-flex; align-items: center; background: var(--surface3); border-radius: 5px; padding: 3px 7px; font-family: var(--font-mono); font-size: 11px; color: var(--text2); }
-  .pill.accent { background: rgba(200,255,0,0.1); color: var(--accent); }
-  .pill.info   { background: rgba(0,229,255,0.1); color: var(--accent2); }
-
-  .stepper { display: flex; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .stepper input { border: none; border-radius: 0; text-align: center; flex: 1; min-width: 0; padding: 10px 4px; }
-  .stepper input:focus { border: none; }
-  .stepper-btn { background: var(--surface3); border: none; color: var(--text); width: 40px; height: 42px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .stepper-btn:active { background: var(--border); }
-
-  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; font-family: var(--font-display); font-weight: 600; font-size: 14px; letter-spacing: 0.05em; padding: 10px 22px; border-radius: 100px; z-index: 400; opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap; }
-  .toast.show { opacity: 1; }
-
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .cal-dow { text-align: center; font-family: var(--font-display); font-size: 11px; letter-spacing: 0.06em; color: var(--text3); padding-bottom: 6px; font-weight: 600; }
-  .cal-day { aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: default; border: 1px solid transparent; transition: all 0.12s; position: relative; font-family: var(--font-mono); font-size: 13px; color: var(--text3); }
-  .cal-day.has-log { color: var(--text); cursor: pointer; }
-  .cal-day.has-log:hover { background: var(--surface2); border-color: var(--border); }
-  .cal-day.has-log::after { content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--accent); border-radius: 50%; }
-  .cal-day.today { border-color: rgba(200,255,0,0.4); color: var(--accent); }
-  .cal-day.today.has-log::after { background: var(--accent2); }
-  .cal-day.other-month { opacity: 0.15; pointer-events: none; }
-
-  .day-section { margin: 0 16px 20px; }
-  .day-label { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: 0.04em; color: var(--text); padding: 14px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
-
-  .tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-  .tag { background: var(--surface3); border-radius: 6px; padding: 4px 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text2); cursor: pointer; border: 1px solid transparent; }
-  .tag.selected { border-color: var(--accent); color: var(--accent); background: rgba(200,255,0,0.07); }
-
-  .back-header { display: flex; align-items: center; gap: 12px; padding: 16px; position: sticky; top: 0; background: var(--bg); z-index: 50; border-bottom: 1px solid var(--border); }
-  .back-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; flex-shrink: 0; }
-  .back-header h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.03em; }
+:root{--bg:#0d0d0f;--surface:#16161a;--surface2:#1e1e24;--surface3:#27272f;--border:#2e2e38;--accent:#c8ff00;--accent2:#00e5ff;--danger:#ff4d4d;--warn:#ffaa00;--text:#f0f0f0;--text2:#9090a0;--text3:#55555f;--radius:12px;--font-display:'Barlow Condensed',sans-serif;--font-body:'Barlow',sans-serif;--font-mono:'DM Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overscroll-behavior:none}
+#root{max-width:480px;margin:0 auto;min-height:100vh}
+.page{min-height:100vh;padding-bottom:56px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:8px;font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-accent{background:var(--accent);color:#000}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:transparent;color:var(--danger);border:1px solid var(--danger)}
+.btn-warn{background:rgba(255,170,0,.12);color:var(--warn);border:1px solid rgba(255,170,0,.35)}
+.btn-sm{padding:6px 10px;font-size:12px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:15px;padding:10px 12px;outline:none;transition:border-color .15s;-webkit-appearance:none}
+input:focus,select:focus{border-color:var(--accent)}
+input::placeholder{color:var(--text3)}
+select option{background:var(--surface2)}
+label{font-size:12px;font-family:var(--font-display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text2);display:block;margin-bottom:5px}
+.form-row{margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+/* Modals */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:flex-end}
+.modal-backdrop.center{align-items:center;padding:20px}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;border-top:1px solid var(--border);width:100%;max-height:92vh;overflow-y:auto;padding:20px 16px 56px}
+.modal.center-modal{border-radius:16px;border:1px solid var(--border);max-height:86vh;padding:20px 16px 28px}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:.03em;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px}
+/* Exercise items */
+.exercise-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.exercise-name{font-family:var(--font-display);font-size:19px;font-weight:600;letter-spacing:.03em;color:var(--text)}
+.exercise-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.pill{display:inline-flex;align-items:center;background:var(--surface3);border-radius:5px;padding:3px 7px;font-family:var(--font-mono);font-size:11px;color:var(--text2);white-space:nowrap}
+.pill.accent{background:rgba(200,255,0,.1);color:var(--accent)}
+.pill.info{background:rgba(0,229,255,.1);color:var(--accent2)}
+/* Stepper */
+.stepper{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.stepper input{border:none;border-radius:0;text-align:center;flex:1;min-width:0;padding:10px 2px}
+.stepper input:focus{border:none}
+.stepper-btn{background:var(--surface3);border:none;color:var(--text);width:38px;height:42px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stepper-btn:active{background:var(--border)}
+/* Toast */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-family:var(--font-display);font-weight:600;font-size:14px;letter-spacing:.05em;padding:10px 22px;border-radius:100px;z-index:400;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+/* Calendar */
+.cal-wrap{touch-action:pan-y;user-select:none}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-family:var(--font-display);font-size:11px;letter-spacing:.06em;color:var(--text3);padding-bottom:6px;font-weight:600}
+.cal-day{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;border:1px solid transparent;transition:all .12s;position:relative;font-family:var(--font-mono);font-size:13px;color:var(--text3)}
+.cal-day.clickable{color:var(--text);cursor:pointer}
+.cal-day.clickable:hover,.cal-day.past-empty:hover{background:var(--surface2);border-color:var(--border)}
+.cal-day.has-log{color:var(--text);cursor:pointer}
+.cal-day.has-log::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--accent);border-radius:50%}
+.cal-day.today{border-color:rgba(200,255,0,.4);color:var(--accent)}
+.cal-day.today.has-log::after{background:var(--accent2)}
+.cal-day.other-month{opacity:.15;pointer-events:none}
+.cal-day.past-empty{color:var(--text3);cursor:pointer;opacity:.7}
+.cal-day.past-empty:hover{color:var(--text)}
+/* Day sections (routine) */
+.day-section{margin:0 16px 12px}
+.day-label-row{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:.04em;color:var(--text);padding:14px 0 10px;border-bottom:1px solid var(--border);margin-bottom:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.day-body{overflow:hidden;transition:max-height .25s ease}
+/* Tags */
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{background:var(--surface3);border-radius:6px;padding:4px 10px;font-family:var(--font-mono);font-size:12px;color:var(--text2);cursor:pointer;border:1px solid transparent}
+.tag.selected{border-color:var(--accent);color:var(--accent);background:rgba(200,255,0,.07)}
+/* Back header */
+.back-header{display:flex;align-items:center;gap:12px;padding:16px;position:sticky;top:0;background:var(--bg);z-index:50;border-bottom:1px solid var(--border)}
+.back-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
+.back-header h2{font-family:var(--font-display);font-size:22px;font-weight:700;letter-spacing:.03em}
+/* Clickable exercise card */
+.ex-card-clickable{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.ex-card-clickable:hover{border-color:var(--accent)}
+/* Stat blocks */
+.stat-block{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;flex:1;cursor:pointer;transition:border-color .15s}
+.stat-block:hover{border-color:var(--accent)}
+.stat-val{font-family:var(--font-display);font-size:34px;font-weight:700;color:var(--accent);line-height:1}
+.stat-lbl{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-top:4px}
+/* Warn banner */
+.warn-banner{background:rgba(255,170,0,.09);border:1px solid rgba(255,170,0,.3);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--warn);line-height:1.5}
+/* WIP badge */
+.wip{display:inline-flex;align-items:center;gap:6px;background:var(--surface3);border:1px dashed var(--border);border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:12px;color:var(--text3)}
 </style>
 </head>
 <body>
@@ -106,27 +104,28 @@
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
-const STORE_KEY = 'lift_data_v3';
+// ── Storage ───────────────────────────────────────────────────────────────────
+const STORE_KEY = 'lift_data_v4';
 function load() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; } }
 function save(d) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
-const INITIAL = { routine: {}, sessions: [], targets: {}, draftSession: null };
+// data shape: { routine, sessions, targets, draftSession, bodyWeights, weightPhotos }
+// bodyWeights: [{id, date (YYYY-MM-DD), weight (kg), photoKey?}]
+// weightPhotos: {key: dataUrl}  — stored separately to keep main data lean
+const INITIAL = { routine:{}, sessions:[], targets:{}, draftSession:null, bodyWeights:[], weightPhotos:{} };
 
-const uuid = () => Math.random().toString(36).slice(2, 9);
-const fmtShort = d => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-const toDateStr = d => { const dt = new Date(d); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; };
+const uuid = () => Math.random().toString(36).slice(2,9);
+const fmtShort = d => new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+const toDateStr = d => { const dt=new Date(d); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; };
+const todayDateStr = () => toDateStr(new Date());
+function greeting() { const h=new Date().getHours(); return h<12?'Good morning':h<17?'Good afternoon':'Good evening'; }
 
-function greeting() {
-  const h = new Date().getHours();
-  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-}
-
-// ── Shared ────────────────────────────────────────────────────────────────────
+// ── Shared components ─────────────────────────────────────────────────────────
 function Stepper({ value, onChange, min=0, max=999, step=1 }) {
   return (
     <div className="stepper">
-      <button className="stepper-btn" onClick={() => onChange(Math.max(min, +(parseFloat(value)||0).toFixed(4) - step))}>−</button>
-      <input type="number" value={value} min={min} max={max} step={step} onChange={e => onChange(parseFloat(e.target.value)||0)} />
-      <button className="stepper-btn" onClick={() => onChange(Math.min(max, +(parseFloat(value)||0).toFixed(4) + step))}>+</button>
+      <button className="stepper-btn" onClick={()=>onChange(Math.max(min,Math.round((+(parseFloat(value)||0)-step)*100)/100))}>−</button>
+      <input type="number" value={value} min={min} max={max} step={step} onChange={e=>onChange(parseFloat(e.target.value)||0)}/>
+      <button className="stepper-btn" onClick={()=>onChange(Math.min(max,Math.round((+(parseFloat(value)||0)+step)*100)/100))}>+</button>
     </div>
   );
 }
@@ -134,39 +133,30 @@ function Toast({ msg }) { return <div className={`toast${msg?' show':''}`}>{msg}
 
 // ── CSV ───────────────────────────────────────────────────────────────────────
 function exportCSV(data) {
-  const q = v => `"${String(v).replace(/"/g,'""')}"`;
-  const row = r => r.map(q).join(',');
-  const rr = [row(['sheet','day_num','day_name','exercise_id','exercise_name','min_sets','max_sets','min_reps','max_reps'])];
-  Object.entries(data.routine).forEach(([d,day]) => (day.exercises||[]).forEach(ex =>
-    rr.push(row(['routine',d,day.name||'',ex.id,ex.name,ex.minSets,ex.maxSets,ex.minReps,ex.maxReps]))));
-  const sr = [row(['sheet','session_id','date','day_num','exercise_id','sets','reps','weight_kg'])];
-  data.sessions.forEach(s => (s.entries||[]).forEach(e =>
-    sr.push(row(['session',s.id,s.date,s.dayNum,e.exerciseId,e.sets,e.reps,e.weight??'']))));
-  const tr = [row(['sheet','exercise_id','target_sets','target_reps','target_weight_kg'])];
-  Object.entries(data.targets||{}).forEach(([id,t]) =>
-    tr.push(row(['target',id,t.sets??'',t.reps??'',t.weight??''])));
-  const csv = [...rr,'',...sr,'',...tr].join('\n');
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([csv],{type:'text/csv'})),
-    download: `lift-${new Date().toISOString().slice(0,10)}.csv`
-  });
-  a.click();
+  const q=v=>`"${String(v).replace(/"/g,'""')}"`, row=r=>r.map(q).join(',');
+  const rr=[row(['sheet','day_num','day_name','exercise_id','exercise_name','min_sets','max_sets','min_reps','max_reps'])];
+  Object.entries(data.routine).forEach(([d,day])=>(day.exercises||[]).forEach(ex=>rr.push(row(['routine',d,day.name||'',ex.id,ex.name,ex.minSets,ex.maxSets,ex.minReps,ex.maxReps]))));
+  const sr=[row(['sheet','session_id','date','day_num','exercise_id','sets','reps','weight_kg'])];
+  data.sessions.forEach(s=>(s.entries||[]).forEach(e=>sr.push(row(['session',s.id,s.date,s.dayNum,e.exerciseId,e.sets,e.reps,e.weight??'']))));
+  const tr=[row(['sheet','exercise_id','target_sets','target_reps','target_weight_kg'])];
+  Object.entries(data.targets||{}).forEach(([id,t])=>tr.push(row(['target',id,t.sets??'',t.reps??'',t.weight??''])));
+  const bw=[row(['sheet','bw_id','date','weight_kg'])];
+  (data.bodyWeights||[]).forEach(w=>bw.push(row(['bodyweight',w.id,w.date,w.weight])));
+  const csv=[...rr,'',...sr,'',...tr,'',...bw].join('\n');
+  Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([csv],{type:'text/csv'})),download:`lift-${new Date().toISOString().slice(0,10)}.csv`}).click();
 }
-
 function parseCSV(text) {
-  const blocks = text.trim().split(/\n[ \t]*\n/);
-  function parseBlock(b) {
-    const lines = b.trim().split('\n');
-    const hdrs = lines[0].split(',').map(h=>h.replace(/^"|"$/g,''));
-    return lines.slice(1).map(line => {
-      const vals=[]; let cur='', inQ=false;
-      for(const c of line){ if(c==='"')inQ=!inQ; else if(c===','&&!inQ){vals.push(cur);cur='';}else cur+=c; }
-      vals.push(cur);
-      return Object.fromEntries(hdrs.map((h,i)=>[h,vals[i]??'']));
+  const blocks=text.trim().split(/\n[ \t]*\n/);
+  function pb(b){
+    const lines=b.trim().split('\n'),hdrs=lines[0].split(',').map(h=>h.replace(/^"|"$/g,''));
+    return lines.slice(1).map(line=>{
+      const vals=[];let cur='',inQ=false;
+      for(const c of line){if(c==='"')inQ=!inQ;else if(c===','&&!inQ){vals.push(cur);cur='';}else cur+=c;}
+      vals.push(cur);return Object.fromEntries(hdrs.map((h,i)=>[h,vals[i]??'']));
     });
   }
-  const [b0,b1,b2] = blocks;
-  const rr=b0?parseBlock(b0):[], sr=b1?parseBlock(b1):[], tr=b2?parseBlock(b2):[];
+  const [b0,b1,b2,b3]=blocks;
+  const rr=b0?pb(b0):[],sr=b1?pb(b1):[],tr=b2?pb(b2):[],bwr=b3?pb(b3):[];
   const routine={};
   rr.filter(r=>r.sheet==='routine').forEach(r=>{
     if(!routine[r.day_num])routine[r.day_num]={name:r.day_name,exercises:[]};
@@ -178,27 +168,31 @@ function parseCSV(text) {
     sm[r.session_id].entries.push({exerciseId:r.exercise_id,sets:+r.sets,reps:+r.reps,weight:r.weight_kg!==''?+r.weight_kg:0});
   });
   const targets={};
-  tr.filter(r=>r.sheet==='target').forEach(r=>{
-    targets[r.exercise_id]={sets:r.target_sets!==''?+r.target_sets:undefined,reps:r.target_reps!==''?+r.target_reps:undefined,weight:r.target_weight_kg!==''?+r.target_weight_kg:undefined};
-  });
-  return {routine,sessions:Object.values(sm),targets};
+  tr.filter(r=>r.sheet==='target').forEach(r=>{targets[r.exercise_id]={sets:r.target_sets!==''?+r.target_sets:undefined,reps:r.target_reps!==''?+r.target_reps:undefined,weight:r.target_weight_kg!==''?+r.target_weight_kg:undefined};});
+  const bodyWeights=bwr.filter(r=>r.sheet==='bodyweight').map(r=>({id:r.bw_id,date:r.date,weight:+r.weight_kg}));
+  return {routine,sessions:Object.values(sm),targets,bodyWeights};
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// APP
+// APP ROOT
 // ══════════════════════════════════════════════════════════════════════════════
 function App() {
-  const [data, setData] = useState(() => ({...INITIAL,...load()}));
-  const [page, setPage] = useState('home');
-  const [toast, setToast] = useState('');
-  const timer = useRef();
-  const persist = useCallback(d => { setData(d); save(d); }, []);
-  function showToast(msg) { clearTimeout(timer.current); setToast(msg); timer.current = setTimeout(()=>setToast(''),2400); }
+  const [data,setData]=useState(()=>({...INITIAL,...load()}));
+  const [page,setPage]=useState('home'); // 'home'|'routine'|'stats'|'bodyweight'|'exercise-detail'
+  const [pageCtx,setPageCtx]=useState(null); // extra context for detail pages
+  const [toast,setToast]=useState('');
+  const timer=useRef();
+  const persist=useCallback(d=>{setData(d);save(d);},[]);
+  function showToast(msg){clearTimeout(timer.current);setToast(msg);timer.current=setTimeout(()=>setToast(''),2400);}
+  function go(p,ctx=null){setPage(p);setPageCtx(ctx);}
   return (
     <div>
-      {page==='home'    && <HomePage    data={data} persist={persist} showToast={showToast} goRoutine={()=>setPage('routine')} />}
-      {page==='routine' && <RoutinePage data={data} persist={persist} showToast={showToast} goBack={()=>setPage('home')} />}
-      <Toast msg={toast} />
+      {page==='home'      && <HomePage      data={data} persist={persist} showToast={showToast} go={go}/>}
+      {page==='routine'   && <RoutinePage   data={data} persist={persist} showToast={showToast} goBack={()=>go('home')}/>}
+      {page==='stats'     && <StatsPage     data={data} persist={persist} showToast={showToast} go={go}/>}
+      {page==='bodyweight'&& <BodyWeightPage data={data} persist={persist} showToast={showToast} goBack={()=>go('stats')}/>}
+      {page==='exercise-detail' && <ExerciseDetailPage data={data} exerciseId={pageCtx} goBack={()=>go('stats')}/>}
+      <Toast msg={toast}/>
     </div>
   );
 }
@@ -206,375 +200,421 @@ function App() {
 // ══════════════════════════════════════════════════════════════════════════════
 // HOME PAGE
 // ══════════════════════════════════════════════════════════════════════════════
-function HomePage({ data, persist, showToast, goRoutine }) {
-  const [workoutOpen, setWorkoutOpen] = useState(false);
-  const [dayPickOpen, setDayPickOpen] = useState(false);
-  const [calModal, setCalModal]       = useState(null); // YYYY-MM-DD string
-  const [dataModal, setDataModal]     = useState(false);
+function HomePage({ data, persist, showToast, go }) {
+  const [workoutOpen,setWorkoutOpen]=useState(false);
+  const [dayPickOpen,setDayPickOpen]=useState(false);
+  const [calModal,setCalModal]=useState(null);       // {dateStr, isPast, hasSessions}
+  const [dataModal,setDataModal]=useState(false);
+  const now=new Date(), todayStr=toDateStr(now);
+  const [calYear,setCalYear]=useState(now.getFullYear());
+  const [calMonth,setCalMonth]=useState(now.getMonth());
+  // swipe
+  const swipeRef=useRef({x:null});
+  const dayNums=Object.keys(data.routine).sort();
+  const hasDraft=!!data.draftSession;
+  const sessionsByDate=useMemo(()=>{
+    const m={};data.sessions.forEach(s=>{const d=toDateStr(s.date);if(!m[d])m[d]=[];m[d].push(s);});return m;
+  },[data.sessions]);
 
-  const now = new Date();
-  const todayStr = toDateStr(now);
-  const [calYear,  setCalYear]  = useState(now.getFullYear());
-  const [calMonth, setCalMonth] = useState(now.getMonth());
-
-  const dayNums = Object.keys(data.routine).sort();
-  const hasDraft = !!data.draftSession;
-
-  const sessionsByDate = useMemo(() => {
-    const m = {};
-    data.sessions.forEach(s => { const d = toDateStr(s.date); if(!m[d])m[d]=[]; m[d].push(s); });
-    return m;
-  }, [data.sessions]);
-
-  function getLatest(exerciseId, dayNum) {
-    for (let i = data.sessions.length-1; i >= 0; i--) {
-      const s = data.sessions[i];
-      if (String(s.dayNum)===String(dayNum)) {
-        const e = s.entries?.find(e=>e.exerciseId===exerciseId);
-        if (e) return {...e, date:s.date};
-      }
-    }
-    return null;
+  function getLatest(exerciseId,dayNum) {
+    for(let i=data.sessions.length-1;i>=0;i--){
+      const s=data.sessions[i];
+      if(String(s.dayNum)===String(dayNum)){const e=s.entries?.find(e=>e.exerciseId===exerciseId);if(e)return{...e,date:s.date};}
+    }return null;
   }
-
   function startDraft(dayNum) {
-    const exs = data.routine[dayNum]?.exercises || [];
-    const entries = exs.map(ex => {
-      const prev = getLatest(ex.id, dayNum);
-      const t = data.targets[ex.id]||{};
-      return { exerciseId:ex.id, sets:t.sets??prev?.sets??ex.minSets, reps:t.reps??prev?.reps??ex.minReps, weight:t.weight??prev?.weight??0 };
-    });
-    persist({...data, draftSession:{dayNum, entries}});
-    setDayPickOpen(false);
-    setWorkoutOpen(true);
+    const exs=data.routine[dayNum]?.exercises||[];
+    const entries=exs.map(ex=>{const prev=getLatest(ex.id,dayNum),t=data.targets[ex.id]||{};return{exerciseId:ex.id,sets:t.sets??prev?.sets??ex.minSets,reps:t.reps??prev?.reps??ex.minReps,weight:t.weight??prev?.weight??0};});
+    persist({...data,draftSession:{dayNum,entries}});setDayPickOpen(false);setWorkoutOpen(true);
   }
-
-  function handleLogClick() {
-    if (hasDraft) { setWorkoutOpen(true); return; }
-    if (!dayNums.length) { showToast('Set up your routine first'); goRoutine(); return; }
-    if (dayNums.length===1) { startDraft(dayNums[0]); }
-    else setDayPickOpen(true);
+  function handleLogClick(){
+    if(hasDraft){setWorkoutOpen(true);return;}
+    if(!dayNums.length){showToast('Set up your routine first');go('routine');return;}
+    if(dayNums.length===1)startDraft(dayNums[0]);else setDayPickOpen(true);
   }
-
-  function updateDraftEntry(exerciseId, field, val) {
-    const entries = data.draftSession.entries.map(e => e.exerciseId===exerciseId ? {...e,[field]:val} : e);
-    persist({...data, draftSession:{...data.draftSession, entries}});
+  function updateDraftEntry(exId,field,val){
+    persist({...data,draftSession:{...data.draftSession,entries:data.draftSession.entries.map(e=>e.exerciseId===exId?{...e,[field]:val}:e)}});
   }
-
-  function commitSession() {
-    const session = {id:uuid(), date:new Date().toISOString(), dayNum:data.draftSession.dayNum, entries:data.draftSession.entries};
-    persist({...data, sessions:[...data.sessions, session], draftSession:null});
-    setWorkoutOpen(false);
-    showToast('Workout saved!');
+  function commitSession(overrideDate){
+    const date=overrideDate?new Date(overrideDate+'T12:00:00').toISOString():new Date().toISOString();
+    const session={id:uuid(),date,dayNum:data.draftSession.dayNum,entries:data.draftSession.entries};
+    persist({...data,sessions:[...data.sessions,session],draftSession:null});
+    setWorkoutOpen(false);showToast('Workout saved!');
   }
-
-  function discardDraft() {
-    persist({...data, draftSession:null});
-    setWorkoutOpen(false);
-  }
+  function discardDraft(){persist({...data,draftSession:null});setWorkoutOpen(false);}
 
   // Calendar
-  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  function calDays() {
-    const firstDow = new Date(calYear, calMonth, 1).getDay();
-    const offset   = (firstDow + 6) % 7; // Mon=0
-    const dInMonth = new Date(calYear, calMonth+1, 0).getDate();
-    const dInPrev  = new Date(calYear, calMonth, 0).getDate();
-    const cells = [];
-    for (let i=0;i<offset;i++) cells.push({d:dInPrev-offset+1+i, cur:false});
-    for (let d=1;d<=dInMonth;d++) cells.push({d, cur:true});
-    while (cells.length%7!==0) cells.push({d:cells.length-offset-dInMonth+1, cur:false});
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  function calDays(){
+    const firstDow=new Date(calYear,calMonth,1).getDay(),offset=(firstDow+6)%7;
+    const dInMonth=new Date(calYear,calMonth+1,0).getDate(),dInPrev=new Date(calYear,calMonth,0).getDate();
+    const cells=[];
+    for(let i=0;i<offset;i++)cells.push({d:dInPrev-offset+1+i,cur:false});
+    for(let d=1;d<=dInMonth;d++)cells.push({d,cur:true});
+    while(cells.length%7!==0)cells.push({d:cells.length-offset-dInMonth+1,cur:false});
     return cells;
   }
-  function prevMonth() { if(calMonth===0){setCalMonth(11);setCalYear(y=>y-1);}else setCalMonth(m=>m-1); }
-  function nextMonth() { if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1); }
+  function prevMonth(){if(calMonth===0){setCalMonth(11);setCalYear(y=>y-1);}else setCalMonth(m=>m-1);}
+  function nextMonth(){if(calMonth===11){setCalMonth(0);setCalYear(y=>y+1);}else setCalMonth(m=>m+1);}
+
+  function handleCalDayClick(ds){
+    const hasSessions=!!sessionsByDate[ds];
+    const isPast=ds<todayStr;
+    const isFuture=ds>todayStr;
+    if(isFuture)return; // can't log future
+    setCalModal({dateStr:ds,isPast,hasSessions});
+  }
+
+  // swipe
+  function onTouchStart(e){swipeRef.current.x=e.touches[0].clientX;}
+  function onTouchEnd(e){
+    if(swipeRef.current.x===null)return;
+    const dx=e.changedTouches[0].clientX-swipeRef.current.x;
+    swipeRef.current.x=null;
+    if(Math.abs(dx)>50){if(dx<0)nextMonth();else prevMonth();}
+  }
+
+  const ACTION_BTNS=[
+    {icon:'🏋️',label:hasDraft?'Continue\nWorkout':'Log a\nWorkout',action:handleLogClick,accent:true},
+    {icon:'📋',label:'My\nRoutine',action:()=>go('routine'),accent:false},
+    {icon:'📊',label:'Stats',action:()=>go('stats'),accent:false},
+  ];
 
   return (
     <div className="page">
-      {/* ── Header ── */}
-      <div style={{padding:'36px 20px 20px', display:'flex', alignItems:'flex-start', justifyContent:'space-between'}}>
+      {/* Header */}
+      <div style={{padding:'36px 20px 20px',display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
         <div>
-          <div style={{fontFamily:'var(--font-mono)', fontSize:12, color:'var(--text3)', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6}}>
+          <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',letterSpacing:'.08em',textTransform:'uppercase',marginBottom:6}}>
             {now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}
           </div>
-          <h1 style={{fontFamily:'var(--font-display)', fontSize:38, fontWeight:700, letterSpacing:'0.01em', lineHeight:1.1}}>
+          <h1 style={{fontFamily:'var(--font-display)',fontSize:38,fontWeight:700,letterSpacing:'.01em',lineHeight:1.1}}>
             {greeting()},<br/><span style={{color:'var(--accent)'}}>Nico.</span>
           </h1>
         </div>
-        <button className="btn btn-ghost btn-sm" style={{marginTop:4}} onClick={()=>setDataModal(true)} title="Backup">⇅</button>
+        <button className="btn btn-ghost btn-sm" style={{marginTop:4}} onClick={()=>setDataModal(true)}>⇅</button>
       </div>
 
-      {/* ── Draft banner ── */}
-      {hasDraft && (
-        <div style={{margin:'0 16px 16px', padding:'12px 14px', background:'rgba(200,255,0,0.06)', border:'1px solid rgba(200,255,0,0.22)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'space-between', gap:12}}>
+      {/* Draft banner */}
+      {hasDraft&&(
+        <div style={{margin:'0 16px 16px',padding:'12px 14px',background:'rgba(200,255,0,.06)',border:'1px solid rgba(200,255,0,.22)',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'space-between',gap:12}}>
           <div>
-            <div style={{fontFamily:'var(--font-display)', fontWeight:700, fontSize:13, color:'var(--accent)', letterSpacing:'0.06em'}}>WORKOUT IN PROGRESS</div>
-            <div style={{fontSize:13, color:'var(--text2)', marginTop:2}}>
-              Day {data.draftSession.dayNum}{data.routine[data.draftSession.dayNum]?.name ? ` · ${data.routine[data.draftSession.dayNum].name}` : ''}
-            </div>
+            <div style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:13,color:'var(--accent)',letterSpacing:'.06em'}}>WORKOUT IN PROGRESS</div>
+            <div style={{fontSize:13,color:'var(--text2)',marginTop:2}}>{data.routine[data.draftSession.dayNum]?.name||`Day ${data.draftSession.dayNum}`}</div>
           </div>
           <button className="btn btn-accent btn-sm" onClick={()=>setWorkoutOpen(true)}>Resume</button>
         </div>
       )}
 
-      {/* ── Action buttons ── */}
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, padding:'0 16px 28px'}}>
-        {[
-          { icon:'🏋️', label: hasDraft ? 'Continue\nWorkout' : 'Log a\nWorkout', action: handleLogClick, accent: true },
-          { icon:'📋', label:'My\nRoutine', action: goRoutine, accent: false },
-        ].map(({icon,label,action,accent}) => (
-          <button key={label} onClick={action} style={{
-            background: accent ? 'var(--accent)' : 'var(--surface)',
-            color: accent ? '#000' : 'var(--text)',
-            border: accent ? 'none' : '1px solid var(--border)',
-            borderRadius:14, padding:'20px 12px', cursor:'pointer',
-            display:'flex', flexDirection:'column', alignItems:'center', gap:8,
-            transition:'transform 0.12s',
-          }}
-          onMouseDown={e=>e.currentTarget.style.transform='scale(0.97)'}
-          onMouseUp={e=>e.currentTarget.style.transform=''}
-          onTouchStart={e=>e.currentTarget.style.transform='scale(0.97)'}
-          onTouchEnd={e=>e.currentTarget.style.transform=''}>
-            <span style={{fontSize:28}}>{icon}</span>
-            <span style={{fontFamily:'var(--font-display)', fontWeight:700, fontSize:15, letterSpacing:'0.04em', textAlign:'center', textTransform:'uppercase', whiteSpace:'pre-line', lineHeight:1.15}}>{label}</span>
+      {/* Action buttons — 3 in a row */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10,padding:'0 16px 28px'}}>
+        {ACTION_BTNS.map(({icon,label,action,accent})=>(
+          <button key={label} onClick={action} style={{background:accent?'var(--accent)':'var(--surface)',color:accent?'#000':'var(--text)',border:accent?'none':'1px solid var(--border)',borderRadius:14,padding:'18px 8px',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:6,transition:'transform .12s'}}
+            onTouchStart={e=>e.currentTarget.style.transform='scale(.97)'} onTouchEnd={e=>e.currentTarget.style.transform=''}>
+            <span style={{fontSize:26}}>{icon}</span>
+            <span style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:13,letterSpacing:'.04em',textAlign:'center',textTransform:'uppercase',whiteSpace:'pre-line',lineHeight:1.15}}>{label}</span>
           </button>
         ))}
       </div>
 
-      {/* ── Calendar ── */}
+      {/* Calendar */}
       <div style={{margin:'0 16px 28px'}}>
-        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
           <button onClick={prevMonth} style={{background:'none',border:'none',color:'var(--text2)',fontSize:22,cursor:'pointer',padding:'2px 10px',lineHeight:1}}>‹</button>
-          <div style={{fontFamily:'var(--font-display)', fontWeight:700, fontSize:17, letterSpacing:'0.04em'}}>{MONTHS[calMonth]} {calYear}</div>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,letterSpacing:'.04em'}}>{MONTHS[calMonth]} {calYear}</div>
           <button onClick={nextMonth} style={{background:'none',border:'none',color:'var(--text2)',fontSize:22,cursor:'pointer',padding:'2px 10px',lineHeight:1}}>›</button>
         </div>
-        <div className="cal-grid">
+        <div className="cal-wrap cal-grid" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
           {['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=><div key={d} className="cal-dow">{d}</div>)}
-          {calDays().map((cell,i) => {
-            if (!cell.cur) return <div key={i} className="cal-day other-month">{cell.d}</div>;
-            const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(cell.d).padStart(2,'0')}`;
-            const hasLog = !!sessionsByDate[ds];
-            const isToday = ds===todayStr;
-            return (
-              <div key={i} className={`cal-day${hasLog?' has-log':''}${isToday?' today':''}`}
-                onClick={()=>hasLog && setCalModal(ds)}>
-                {cell.d}
-              </div>
-            );
+          {calDays().map((cell,i)=>{
+            if(!cell.cur)return <div key={i} className="cal-day other-month">{cell.d}</div>;
+            const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(cell.d).padStart(2,'0')}`;
+            const hasLog=!!sessionsByDate[ds],isToday=ds===todayStr,isPast=ds<todayStr,isFuture=ds>todayStr;
+            let cls='cal-day';
+            if(hasLog)cls+=' has-log clickable';
+            else if(isPast)cls+=' past-empty';
+            if(isToday)cls+=' today';
+            if(isFuture)cls+=' other-month'; // grey out future
+            return <div key={i} className={cls} onClick={()=>!isFuture&&handleCalDayClick(ds)}>{cell.d}</div>;
           })}
         </div>
-        <div style={{marginTop:10, display:'flex', gap:16, justifyContent:'center'}}>
-          <div style={{display:'flex', alignItems:'center', gap:5, fontSize:11, color:'var(--text3)', fontFamily:'var(--font-mono)'}}>
-            <div style={{width:6,height:6,background:'var(--accent)',borderRadius:'50%'}}></div> session logged
+        <div style={{marginTop:10,display:'flex',gap:16,justifyContent:'center'}}>
+          <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'var(--text3)',fontFamily:'var(--font-mono)'}}>
+            <div style={{width:6,height:6,background:'var(--accent)',borderRadius:'50%'}}></div> logged
           </div>
-          <div style={{display:'flex', alignItems:'center', gap:5, fontSize:11, color:'var(--text3)', fontFamily:'var(--font-mono)'}}>
-            <div style={{width:16,height:16,borderRadius:6,border:'1px solid rgba(200,255,0,0.4)',display:'inline-block'}}></div> today
+          <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'var(--text3)',fontFamily:'var(--font-mono)'}}>
+            <div style={{width:14,height:14,borderRadius:5,border:'1px solid rgba(200,255,0,.4)',display:'inline-block'}}></div> today
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:5,fontSize:11,color:'var(--text3)',fontFamily:'var(--font-mono)'}}>
+            <div style={{width:14,height:14,borderRadius:5,background:'var(--surface2)',display:'inline-block'}}></div> tap to add
           </div>
         </div>
       </div>
 
-      {/* ── Recent sessions ── */}
-      {data.sessions.length > 0 && (
+      {/* Recent sessions */}
+      {data.sessions.length>0&&(
         <div style={{margin:'0 16px'}}>
-          <div style={{fontFamily:'var(--font-display)', fontWeight:600, fontSize:12, letterSpacing:'0.09em', color:'var(--text3)', marginBottom:10}}>RECENT SESSIONS</div>
-          {[...data.sessions].reverse().slice(0,5).map(s => (
-            <div key={s.id} onClick={()=>setCalModal(toDateStr(s.date))}
-              style={{display:'flex', alignItems:'center', gap:12, padding:'10px 0', borderBottom:'1px solid var(--border)', cursor:'pointer'}}>
-              <div style={{fontFamily:'var(--font-mono)', fontSize:12, color:'var(--text3)', minWidth:68}}>{fmtShort(s.date)}</div>
-              <div style={{flex:1, minWidth:0}}>
-                <div style={{fontFamily:'var(--font-display)', fontWeight:600, fontSize:14, color:'var(--accent)'}}>
-                  Day {s.dayNum}{data.routine[s.dayNum]?.name ? ` · ${data.routine[s.dayNum].name}` : ''}
-                </div>
-                <div style={{fontSize:12, color:'var(--text3)', marginTop:1, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.09em',color:'var(--text3)',marginBottom:10}}>RECENT SESSIONS</div>
+          {[...data.sessions].reverse().slice(0,5).map(s=>(
+            <div key={s.id} onClick={()=>setCalModal({dateStr:toDateStr(s.date),isPast:toDateStr(s.date)<todayStr,hasSessions:true})}
+              style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)',cursor:'pointer'}}>
+              <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',minWidth:68}}>{fmtShort(s.date)}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:14,color:'var(--accent)'}}>{data.routine[s.dayNum]?.name||`Day ${s.dayNum}`}</div>
+                <div style={{fontSize:12,color:'var(--text3)',marginTop:1,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
                   {(s.entries||[]).map(e=>(data.routine[s.dayNum]?.exercises||[]).find(x=>x.id===e.exerciseId)?.name).filter(Boolean).join(' · ')}
                 </div>
               </div>
-              <div style={{color:'var(--text3)', fontSize:16, flexShrink:0}}>›</div>
+              <div style={{color:'var(--text3)',fontSize:16,flexShrink:0}}>›</div>
             </div>
           ))}
         </div>
       )}
 
-      {/* ── Modals ── */}
-      {dayPickOpen && (
+      {/* Modals */}
+      {dayPickOpen&&(
         <div className="modal-backdrop" onClick={()=>setDayPickOpen(false)}>
           <div className="modal" onClick={e=>e.stopPropagation()}>
-            <div className="modal-handle" />
+            <div className="modal-handle"/>
             <div className="modal-title">Which day?</div>
-            <div className="modal-sub">Choose the routine day you're training today.</div>
-            {dayNums.map(d => (
-              <button key={d} onClick={()=>startDraft(d)} style={{
-                width:'100%', display:'flex', flexDirection:'column', alignItems:'flex-start',
-                background:'var(--surface2)', border:'1px solid var(--border)', borderRadius:10,
-                padding:'14px 16px', marginBottom:10, cursor:'pointer', gap:3
-              }}>
-                <span style={{fontFamily:'var(--font-display)', fontWeight:700, fontSize:17, letterSpacing:'0.04em', color:'var(--text)'}}>
-                  Day {d}{data.routine[d]?.name ? ` — ${data.routine[d].name}` : ''}
-                </span>
-                <span style={{fontFamily:'var(--font-body)', fontSize:13, color:'var(--text3)'}}>
-                  {(data.routine[d]?.exercises||[]).map(e=>e.name).join(', ')}
-                </span>
+            <div className="modal-sub">Choose the routine day you're training.</div>
+            {dayNums.map(d=>(
+              <button key={d} onClick={()=>startDraft(d)} style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'flex-start',background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:10,padding:'14px 16px',marginBottom:10,cursor:'pointer',gap:3}}>
+                <span style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,letterSpacing:'.04em',color:'var(--text)'}}>{data.routine[d]?.name||`Day ${d}`}</span>
+                <span style={{fontFamily:'var(--font-body)',fontSize:13,color:'var(--text3)'}}>{(data.routine[d]?.exercises||[]).map(e=>e.name).join(', ')}</span>
               </button>
             ))}
-            <button className="btn btn-ghost" style={{width:'100%', padding:'12px'}} onClick={()=>setDayPickOpen(false)}>Cancel</button>
+            <button className="btn btn-ghost" style={{width:'100%',padding:'12px'}} onClick={()=>setDayPickOpen(false)}>Cancel</button>
           </div>
         </div>
       )}
 
-      {workoutOpen && data.draftSession && (
-        <WorkoutModal
-          data={data}
-          draft={data.draftSession}
-          getLatest={getLatest}
-          onUpdate={updateDraftEntry}
-          onSave={commitSession}
-          onDiscard={discardDraft}
-          onClose={()=>setWorkoutOpen(false)}
+      {workoutOpen&&data.draftSession&&(
+        <WorkoutModal data={data} draft={data.draftSession} getLatest={getLatest}
+          onUpdate={updateDraftEntry} onSave={commitSession} onDiscard={discardDraft} onClose={()=>setWorkoutOpen(false)}/>
+      )}
+
+      {calModal&&(
+        <CalDayModal
+          dateStr={calModal.dateStr} isPast={calModal.isPast} hasSessions={calModal.hasSessions}
+          sessions={sessionsByDate[calModal.dateStr]||[]} data={data} persist={persist} showToast={showToast}
+          dayNums={dayNums} onClose={()=>setCalModal(null)}
         />
       )}
 
-      {calModal && (
-        <DayLogModal
-          dateStr={calModal}
-          sessions={sessionsByDate[calModal]||[]}
-          data={data}
-          persist={persist}
-          showToast={showToast}
-          onClose={()=>setCalModal(null)}
-        />
-      )}
-
-      {dataModal && (
-        <DataModal data={data} persist={persist} showToast={showToast} onClose={()=>setDataModal(false)} />
-      )}
+      {dataModal&&<DataModal data={data} persist={persist} showToast={showToast} onClose={()=>setDataModal(false)}/>}
     </div>
   );
 }
 
-// ── Workout Modal ─────────────────────────────────────────────────────────────
+// ── Workout Modal (new session) ────────────────────────────────────────────────
 function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onClose }) {
-  const exercises = data.routine[draft.dayNum]?.exercises || [];
-  const dayName   = data.routine[draft.dayNum]?.name;
-  function getEntry(exId) { return draft.entries.find(e=>e.exerciseId===exId)||{}; }
+  const [activeEx, setActiveEx] = useState(null); // exerciseId for stepper sub-modal
+  const exercises=data.routine[draft.dayNum]?.exercises||[];
+  const dayName=data.routine[draft.dayNum]?.name;
+  function getEntry(exId){return draft.entries.find(e=>e.exerciseId===exId)||{};}
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
-        <div className="modal-handle" />
+        <div className="modal-handle"/>
         <div style={{marginBottom:20}}>
-          <div style={{fontFamily:'var(--font-mono)', fontSize:11, color:'var(--accent)', letterSpacing:'0.09em', marginBottom:4}}>● EDITING LOG</div>
-          <div className="modal-title">Day {draft.dayNum}{dayName?` — ${dayName}`:''}</div>
-          <div className="modal-sub">Log what you actually did. "Last" shows your most recent entry for this exercise.</div>
+          <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--accent)',letterSpacing:'.09em',marginBottom:4}}>● LOGGING WORKOUT</div>
+          <div className="modal-title">{dayName||`Day ${draft.dayNum}`}</div>
+          <div className="modal-sub">Tap an exercise to log your numbers.</div>
         </div>
-
-        {exercises.map(ex => {
-          const entry  = getEntry(ex.id);
-          const latest = getLatest(ex.id, draft.dayNum);
+        {exercises.map(ex=>{
+          const entry=getEntry(ex.id),latest=getLatest(ex.id,draft.dayNum);
+          const hasData=entry.sets||entry.reps||entry.weight;
           return (
-            <div key={ex.id} className="exercise-item" style={{marginBottom:12}}>
-              <div className="exercise-name">{ex.name}</div>
-              <div className="exercise-meta" style={{marginBottom:10}}>
-                <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
-                {latest && <span className="pill accent">Last: {latest.sets}×{latest.reps} @{latest.weight ?? 0}kg</span>}
-              </div>
-              <div className="form-grid-3">
-                <div><label>Sets</label>
-                  <Stepper value={entry.sets??ex.minSets} min={0} max={ex.maxSets+5} onChange={v=>onUpdate(ex.id,'sets',v)} /></div>
-                <div><label>Reps</label>
-                  <Stepper value={entry.reps??ex.minReps} min={0} max={ex.maxReps+20} onChange={v=>onUpdate(ex.id,'reps',v)} /></div>
-                <div><label>kg</label>
-                  <Stepper value={entry.weight??0} step={2.5} onChange={v=>onUpdate(ex.id,'weight',v)} /></div>
+            <div key={ex.id} className="ex-card-clickable" onClick={()=>setActiveEx(ex.id)}>
+              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
+                <div style={{flex:1,minWidth:0}}>
+                  <div className="exercise-name">{ex.name}</div>
+                  <div className="exercise-meta">
+                    <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
+                    {latest&&<span className="pill accent">Last: {latest.sets}×{latest.reps} @{latest.weight??0}kg</span>}
+                  </div>
+                </div>
+                {hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--accent2)',flexShrink:0,textAlign:'right'}}>{entry.sets}×{entry.reps}<br/>@{entry.weight}kg</div>}
+                {!hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',flexShrink:0}}>tap</div>}
               </div>
             </div>
           );
         })}
+        <button className="btn btn-accent" style={{width:'100%',padding:'15px',fontSize:'16px',marginTop:10,borderRadius:10}} onClick={()=>onSave()}>Save Workout</button>
+        <button className="btn btn-ghost" style={{width:'100%',padding:'12px',marginTop:10}} onClick={onClose}>Keep editing later</button>
+        <button className="btn btn-danger" style={{width:'100%',padding:'10px',marginTop:6,fontSize:'13px'}} onClick={onDiscard}>Discard log</button>
 
-        <button className="btn btn-accent" style={{width:'100%',padding:'15px',fontSize:'16px',marginTop:8,borderRadius:10}} onClick={onSave}>
-          Save Workout
-        </button>
-        <button className="btn btn-ghost" style={{width:'100%',padding:'12px',marginTop:10}} onClick={onClose}>
-          Keep editing later
-        </button>
-        <button className="btn btn-danger" style={{width:'100%',padding:'10px',marginTop:6,fontSize:'13px'}} onClick={onDiscard}>
-          Discard log
-        </button>
+        {activeEx&&(()=>{
+          const ex=exercises.find(e=>e.id===activeEx),entry=getEntry(activeEx),latest=getLatest(activeEx,draft.dayNum);
+          return (
+            <div className="modal-backdrop" onClick={()=>setActiveEx(null)}>
+              <div className="modal" onClick={e=>e.stopPropagation()}>
+                <div className="modal-handle"/>
+                <div className="modal-title" style={{marginBottom:4}}>{ex.name}</div>
+                <div className="exercise-meta" style={{marginBottom:16}}>
+                  <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
+                  {latest&&<span className="pill accent">Last: {latest.sets}×{latest.reps} @{latest.weight??0}kg</span>}
+                </div>
+                <div className="form-grid-3">
+                  <div><label>Sets</label><Stepper value={entry.sets??ex.minSets} min={0} max={ex.maxSets+5} onChange={v=>{onUpdate(activeEx,'sets',v);}}/></div>
+                  <div><label>Reps</label><Stepper value={entry.reps??ex.minReps} min={0} max={ex.maxReps+20} onChange={v=>{onUpdate(activeEx,'reps',v);}}/></div>
+                  <div><label>Weight (kg)</label><Stepper value={entry.weight??0} step={2.5} onChange={v=>{onUpdate(activeEx,'weight',v);}}/></div>
+                </div>
+                <button className="btn btn-accent" style={{width:'100%',padding:'13px',marginTop:14}} onClick={()=>setActiveEx(null)}>Done</button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
 }
 
-// ── Calendar Day Log Modal ────────────────────────────────────────────────────
-function DayLogModal({ dateStr, sessions, data, persist, showToast, onClose }) {
-  const [editingSession, setEditingSession] = useState(null); // session object
-  const [confirmDelete, setConfirmDelete]   = useState(null); // session id
+// ── Calendar Day Modal (view/add/edit/delete) ─────────────────────────────────
+function CalDayModal({ dateStr, isPast, hasSessions, sessions, data, persist, showToast, dayNums, onClose }) {
+  const [editingSession,setEditingSession]=useState(null);
+  const [confirmDelete,setConfirmDelete]=useState(null);
+  const [addingWorkout,setAddingWorkout]=useState(false);
+  const [pickDayForPast,setPickDayForPast]=useState(false);
+  const [pastDayNum,setPastDayNum]=useState(null);
+  const [pastEntries,setPastEntries]=useState([]);
+  const [activeEx,setActiveEx]=useState(null);
 
-  const [y,m,d] = dateStr.split('-').map(Number);
-  const label = new Date(y,m-1,d).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const [y,m,d]=dateStr.split('-').map(Number);
+  const label=new Date(y,m-1,d).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-  function deleteSession(id) {
-    persist({...data, sessions: data.sessions.filter(s=>s.id!==id)});
-    showToast('Session deleted');
-    setConfirmDelete(null);
-    // if no sessions left on this date, close
-    if (sessions.filter(s=>s.id!==id).length===0) onClose();
+  function deleteSession(id){
+    persist({...data,sessions:data.sessions.filter(s=>s.id!==id)});
+    showToast('Session deleted');setConfirmDelete(null);
+    if(sessions.filter(s=>s.id!==id).length===0)onClose();
+  }
+  function saveEditedSession(sid,entries){
+    persist({...data,sessions:data.sessions.map(s=>s.id===sid?{...s,entries}:s)});
+    showToast('Session updated');setEditingSession(null);
+  }
+  function startPastAdd(dayNum){
+    const exs=data.routine[dayNum]?.exercises||[];
+    setPastDayNum(dayNum);
+    setPastEntries(exs.map(ex=>({exerciseId:ex.id,sets:ex.minSets,reps:ex.minReps,weight:0})));
+    setPickDayForPast(false);setAddingWorkout(true);
+  }
+  function commitPastSession(){
+    const session={id:uuid(),date:new Date(y,m-1,d,12,0,0).toISOString(),dayNum:pastDayNum,entries:pastEntries};
+    persist({...data,sessions:[...data.sessions,session]});
+    showToast('Session added');setAddingWorkout(false);onClose();
+  }
+  function updatePastEntry(exId,field,val){setPastEntries(prev=>prev.map(e=>e.exerciseId===exId?{...e,[field]:val}:e));}
+  function getPastEntry(exId){return pastEntries.find(e=>e.exerciseId===exId)||{};}
+
+  if(editingSession){
+    return <EditSessionModal session={editingSession} data={data} onSave={entries=>saveEditedSession(editingSession.id,entries)} onClose={()=>setEditingSession(null)}/>;
   }
 
-  function saveEditedSession(sessionId, newEntries) {
-    persist({...data, sessions: data.sessions.map(s => s.id===sessionId ? {...s, entries:newEntries} : s)});
-    showToast('Session updated');
-    setEditingSession(null);
-  }
-
-  if (editingSession) {
+  // Past workout entry flow
+  if(addingWorkout&&pastDayNum){
+    const exercises=data.routine[pastDayNum]?.exercises||[];
+    const dayName=data.routine[pastDayNum]?.name;
     return (
-      <EditSessionModal
-        session={editingSession}
-        data={data}
-        onSave={(entries) => saveEditedSession(editingSession.id, entries)}
-        onClose={() => setEditingSession(null)}
-      />
+      <div className="modal-backdrop" onClick={()=>setAddingWorkout(false)}>
+        <div className="modal" onClick={e=>e.stopPropagation()}>
+          <div className="modal-handle"/>
+          <div className="warn-banner">⚠️ You're logging a session in the past for {label}.</div>
+          <div className="modal-title">{dayName||`Day ${pastDayNum}`}</div>
+          <div className="modal-sub">Tap each exercise to enter your numbers.</div>
+          {exercises.map(ex=>{
+            const entry=getPastEntry(ex.id),hasData=entry.sets||entry.reps||entry.weight;
+            return (
+              <div key={ex.id} className="ex-card-clickable" onClick={()=>setActiveEx(ex.id)}>
+                <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
+                  <div style={{flex:1}}>
+                    <div className="exercise-name">{ex.name}</div>
+                    <div className="exercise-meta"><span className="pill">{ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span></div>
+                  </div>
+                  {hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--accent2)',flexShrink:0,textAlign:'right'}}>{entry.sets}×{entry.reps}<br/>@{entry.weight}kg</div>}
+                  {!hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',flexShrink:0}}>tap</div>}
+                </div>
+              </div>
+            );
+          })}
+          <button className="btn btn-accent" style={{width:'100%',padding:'14px',marginTop:10,fontSize:'15px'}} onClick={commitPastSession}>Save Past Session</button>
+          <button className="btn btn-ghost" style={{width:'100%',padding:'12px',marginTop:10}} onClick={()=>setAddingWorkout(false)}>Cancel</button>
+
+          {activeEx&&(()=>{
+            const ex=exercises.find(e=>e.id===activeEx),entry=getPastEntry(activeEx);
+            return (
+              <div className="modal-backdrop" onClick={()=>setActiveEx(null)}>
+                <div className="modal" onClick={e=>e.stopPropagation()}>
+                  <div className="modal-handle"/>
+                  <div className="modal-title" style={{marginBottom:14}}>{ex?.name}</div>
+                  <div className="form-grid-3">
+                    <div><label>Sets</label><Stepper value={entry.sets??ex.minSets} min={0} max={ex.maxSets+5} onChange={v=>updatePastEntry(activeEx,'sets',v)}/></div>
+                    <div><label>Reps</label><Stepper value={entry.reps??ex.minReps} min={0} max={ex.maxReps+20} onChange={v=>updatePastEntry(activeEx,'reps',v)}/></div>
+                    <div><label>Weight (kg)</label><Stepper value={entry.weight??0} step={2.5} onChange={v=>updatePastEntry(activeEx,'weight',v)}/></div>
+                  </div>
+                  <button className="btn btn-accent" style={{width:'100%',padding:'13px',marginTop:14}} onClick={()=>setActiveEx(null)}>Done</button>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+    );
+  }
+
+  // Pick day for past session
+  if(pickDayForPast){
+    return (
+      <div className="modal-backdrop" onClick={()=>setPickDayForPast(false)}>
+        <div className="modal" onClick={e=>e.stopPropagation()}>
+          <div className="modal-handle"/>
+          <div className="warn-banner">⚠️ You're adding a session to a past date: {label}.</div>
+          <div className="modal-title">Which routine day?</div>
+          {dayNums.map(d=>(
+            <button key={d} onClick={()=>startPastAdd(d)} style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'flex-start',background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:10,padding:'14px 16px',marginBottom:10,cursor:'pointer',gap:3}}>
+              <span style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,color:'var(--text)'}}>{data.routine[d]?.name||`Day ${d}`}</span>
+              <span style={{fontSize:13,color:'var(--text3)'}}>{(data.routine[d]?.exercises||[]).map(e=>e.name).join(', ')}</span>
+            </button>
+          ))}
+          <button className="btn btn-ghost" style={{width:'100%',padding:'12px'}} onClick={()=>setPickDayForPast(false)}>Cancel</button>
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="modal-backdrop center" onClick={onClose}>
       <div className="modal center-modal" onClick={e=>e.stopPropagation()}>
-        <div style={{fontFamily:'var(--font-mono)', fontSize:11, color:'var(--accent2)', letterSpacing:'0.07em', marginBottom:10}}>{label.toUpperCase()}</div>
-        {sessions.length===0 ? (
-          <div style={{color:'var(--text3)', textAlign:'center', padding:'20px 0'}}>No sessions logged.</div>
-        ) : sessions.map(s => {
-          const dayName = data.routine[s.dayNum]?.name;
-          const exList  = data.routine[s.dayNum]?.exercises||[];
+        <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--accent2)',letterSpacing:'.07em',marginBottom:12}}>{label.toUpperCase()}</div>
+        {sessions.length===0?(
+          <div style={{color:'var(--text3)',textAlign:'center',padding:'16px 0 20px'}}>No sessions on this day.</div>
+        ):sessions.map(s=>{
+          const dayName=data.routine[s.dayNum]?.name,exList=data.routine[s.dayNum]?.exercises||[];
           return (
             <div key={s.id} style={{marginBottom:16}}>
-              <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10}}>
-                <div style={{fontFamily:'var(--font-display)', fontWeight:700, fontSize:20, color:'var(--accent)', letterSpacing:'0.04em'}}>
-                  Day {s.dayNum}{dayName?` — ${dayName}`:''}
-                </div>
-                <div style={{display:'flex', gap:8}}>
-                  <button className="btn btn-ghost btn-sm" onClick={()=>setEditingSession(s)}>✏️ Edit</button>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+                <div style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:19,color:'var(--accent)',letterSpacing:'.04em'}}>{dayName||`Day ${s.dayNum}`}</div>
+                <div style={{display:'flex',gap:6}}>
+                  <button className="btn btn-ghost btn-sm" onClick={()=>setEditingSession(s)}>✏️</button>
                   <button className="btn btn-danger btn-sm" onClick={()=>setConfirmDelete(s.id)}>🗑</button>
                 </div>
               </div>
-              {(s.entries||[]).map(entry => {
-                const ex = exList.find(x=>x.id===entry.exerciseId);
-                if (!ex) return null;
+              {(s.entries||[]).map(entry=>{
+                const ex=exList.find(x=>x.id===entry.exerciseId);if(!ex)return null;
                 return (
-                  <div key={entry.exerciseId} style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',padding:'9px 0',borderBottom:'1px solid var(--border)'}}>
-                    <div style={{fontSize:15, color:'var(--text)'}}>{ex.name}</div>
-                    <div style={{fontFamily:'var(--font-mono)', fontSize:13, color:'var(--text2)', textAlign:'right', flexShrink:0, marginLeft:12}}>
-                      {entry.sets}×{entry.reps}
-                      {entry.weight!=null?<span style={{color:'var(--accent2)'}}> @{entry.weight}kg</span>:null}
+                  <div key={entry.exerciseId} style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{fontSize:15,color:'var(--text)'}}>{ex.name}</div>
+                    <div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--text2)',textAlign:'right',flexShrink:0,marginLeft:12}}>
+                      {entry.sets}×{entry.reps}{entry.weight!=null?<span style={{color:'var(--accent2)'}}> @{entry.weight}kg</span>:null}
                     </div>
                   </div>
                 );
               })}
-
-              {/* Inline delete confirm */}
-              {confirmDelete===s.id && (
-                <div style={{marginTop:12, padding:'12px', background:'rgba(255,77,77,0.08)', border:'1px solid rgba(255,77,77,0.25)', borderRadius:10}}>
-                  <div style={{fontSize:13, color:'var(--text2)', marginBottom:10}}>Delete this session? This can't be undone.</div>
-                  <div style={{display:'flex', gap:8}}>
+              {confirmDelete===s.id&&(
+                <div style={{marginTop:12,padding:'12px',background:'rgba(255,77,77,.08)',border:'1px solid rgba(255,77,77,.25)',borderRadius:10}}>
+                  <div style={{fontSize:13,color:'var(--text2)',marginBottom:10}}>Delete this session? Can't be undone.</div>
+                  <div style={{display:'flex',gap:8}}>
                     <button className="btn btn-danger btn-sm" style={{flex:1}} onClick={()=>deleteSession(s.id)}>Yes, delete</button>
                     <button className="btn btn-ghost btn-sm" style={{flex:1}} onClick={()=>setConfirmDelete(null)}>Cancel</button>
                   </div>
@@ -583,6 +623,11 @@ function DayLogModal({ dateStr, sessions, data, persist, showToast, onClose }) {
             </div>
           );
         })}
+        {isPast&&dayNums.length>0&&(
+          <button className="btn btn-warn" style={{width:'100%',padding:'11px',marginTop:4}} onClick={()=>setPickDayForPast(true)}>
+            + Add past session for this day
+          </button>
+        )}
         <button className="btn btn-ghost" style={{width:'100%',padding:'11px',marginTop:8}} onClick={onClose}>Close</button>
       </div>
     </div>
@@ -591,59 +636,54 @@ function DayLogModal({ dateStr, sessions, data, persist, showToast, onClose }) {
 
 // ── Edit Session Modal ────────────────────────────────────────────────────────
 function EditSessionModal({ session, data, onSave, onClose }) {
-  const exercises = data.routine[session.dayNum]?.exercises || [];
-  const dayName   = data.routine[session.dayNum]?.name;
-  const fmtDate   = new Date(session.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-
-  // Initialise local editable entries from existing session data
-  const [entries, setEntries] = useState(() =>
-    exercises.map(ex => {
-      const existing = session.entries?.find(e=>e.exerciseId===ex.id);
-      return { exerciseId:ex.id, sets:existing?.sets??ex.minSets, reps:existing?.reps??ex.minReps, weight:existing?.weight??0 };
-    })
-  );
-
-  function update(exId, field, val) {
-    setEntries(prev => prev.map(e => e.exerciseId===exId ? {...e,[field]:val} : e));
-  }
-  function getEntry(exId) { return entries.find(e=>e.exerciseId===exId)||{}; }
-
+  const exercises=data.routine[session.dayNum]?.exercises||[];
+  const dayName=data.routine[session.dayNum]?.name;
+  const fmtDate=new Date(session.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  const [entries,setEntries]=useState(()=>exercises.map(ex=>{const e=session.entries?.find(e=>e.exerciseId===ex.id);return{exerciseId:ex.id,sets:e?.sets??ex.minSets,reps:e?.reps??ex.minReps,weight:e?.weight??0};}));
+  const [activeEx,setActiveEx]=useState(null);
+  function update(exId,field,val){setEntries(prev=>prev.map(e=>e.exerciseId===exId?{...e,[field]:val}:e));}
+  function getEntry(exId){return entries.find(e=>e.exerciseId===exId)||{};}
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
-        <div className="modal-handle" />
+        <div className="modal-handle"/>
         <div style={{marginBottom:20}}>
-          <div style={{fontFamily:'var(--font-mono)', fontSize:11, color:'var(--accent2)', letterSpacing:'0.09em', marginBottom:4}}>✏️ EDITING SESSION · {fmtDate.toUpperCase()}</div>
-          <div className="modal-title">Day {session.dayNum}{dayName?` — ${dayName}`:''}</div>
-          <div className="modal-sub">Adjust any values and save.</div>
+          <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--accent2)',letterSpacing:'.09em',marginBottom:4}}>✏️ EDITING · {fmtDate.toUpperCase()}</div>
+          <div className="modal-title">{dayName||`Day ${session.dayNum}`}</div>
+          <div className="modal-sub">Tap an exercise to adjust numbers.</div>
         </div>
-
-        {exercises.map(ex => {
-          const entry = getEntry(ex.id);
+        {exercises.map(ex=>{
+          const entry=getEntry(ex.id),hasData=entry.sets||entry.reps||entry.weight;
           return (
-            <div key={ex.id} className="exercise-item" style={{marginBottom:12}}>
-              <div className="exercise-name">{ex.name}</div>
-              <div className="exercise-meta" style={{marginBottom:10}}>
-                <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
-              </div>
-              <div className="form-grid-3">
-                <div><label>Sets</label>
-                  <Stepper value={entry.sets??ex.minSets} min={0} max={ex.maxSets+5} onChange={v=>update(ex.id,'sets',v)} /></div>
-                <div><label>Reps</label>
-                  <Stepper value={entry.reps??ex.minReps} min={0} max={ex.maxReps+20} onChange={v=>update(ex.id,'reps',v)} /></div>
-                <div><label>kg</label>
-                  <Stepper value={entry.weight??0} step={2.5} onChange={v=>update(ex.id,'weight',v)} /></div>
+            <div key={ex.id} className="ex-card-clickable" onClick={()=>setActiveEx(ex.id)}>
+              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
+                <div style={{flex:1}}><div className="exercise-name">{ex.name}</div></div>
+                <div style={{fontFamily:'var(--font-mono)',fontSize:13,color:hasData?'var(--accent2)':'var(--text3)',flexShrink:0,textAlign:'right'}}>
+                  {hasData?<>{entry.sets}×{entry.reps}<br/>@{entry.weight}kg</>:'tap'}
+                </div>
               </div>
             </div>
           );
         })}
-
-        <button className="btn btn-accent" style={{width:'100%',padding:'15px',fontSize:'16px',marginTop:8,borderRadius:10}} onClick={()=>onSave(entries)}>
-          Save Changes
-        </button>
-        <button className="btn btn-ghost" style={{width:'100%',padding:'12px',marginTop:10}} onClick={onClose}>
-          Cancel
-        </button>
+        <button className="btn btn-accent" style={{width:'100%',padding:'14px',marginTop:10}} onClick={()=>onSave(entries)}>Save Changes</button>
+        <button className="btn btn-ghost" style={{width:'100%',padding:'12px',marginTop:10}} onClick={onClose}>Cancel</button>
+        {activeEx&&(()=>{
+          const ex=exercises.find(e=>e.id===activeEx),entry=getEntry(activeEx);
+          return (
+            <div className="modal-backdrop" onClick={()=>setActiveEx(null)}>
+              <div className="modal" onClick={e=>e.stopPropagation()}>
+                <div className="modal-handle"/>
+                <div className="modal-title" style={{marginBottom:14}}>{ex?.name}</div>
+                <div className="form-grid-3">
+                  <div><label>Sets</label><Stepper value={entry.sets??ex.minSets} min={0} max={ex.maxSets+5} onChange={v=>update(activeEx,'sets',v)}/></div>
+                  <div><label>Reps</label><Stepper value={entry.reps??ex.minReps} min={0} max={ex.maxReps+20} onChange={v=>update(activeEx,'reps',v)}/></div>
+                  <div><label>Weight (kg)</label><Stepper value={entry.weight??0} step={2.5} onChange={v=>update(activeEx,'weight',v)}/></div>
+                </div>
+                <button className="btn btn-accent" style={{width:'100%',padding:'13px',marginTop:14}} onClick={()=>setActiveEx(null)}>Done</button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
@@ -651,44 +691,32 @@ function EditSessionModal({ session, data, onSave, onClose }) {
 
 // ── Data Modal ────────────────────────────────────────────────────────────────
 function DataModal({ data, persist, showToast, onClose }) {
-  const fileRef = useRef();
-  const [preview, setPreview] = useState(null);
-  const [err, setErr] = useState('');
-  function handleFile(e) {
-    const f = e.target.files[0]; if(!f) return;
-    setErr(''); setPreview(null);
-    const r = new FileReader();
-    r.onload = ev => {
-      try {
-        const p = parseCSV(ev.target.result);
-        const dc=Object.keys(p.routine).length, sc=p.sessions.length;
-        if(!dc&&!sc){setErr('No valid data found.');return;}
-        setPreview({p,dc,sc});
-      } catch { setErr('Could not parse file.'); }
-    };
+  const fileRef=useRef(),[preview,setPreview]=useState(null),[err,setErr]=useState('');
+  function handleFile(e){
+    const f=e.target.files[0];if(!f)return;setErr('');setPreview(null);
+    const r=new FileReader();
+    r.onload=ev=>{try{const p=parseCSV(ev.target.result),dc=Object.keys(p.routine).length,sc=p.sessions.length;if(!dc&&!sc){setErr('No valid data found.');return;}setPreview({p,dc,sc});}catch{setErr('Could not parse file.');}};
     r.readAsText(f);
   }
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
-        <div className="modal-handle" />
+        <div className="modal-handle"/>
         <div className="modal-title">Data Backup</div>
         <div style={{marginBottom:14,padding:'14px',background:'var(--surface2)',borderRadius:10,border:'1px solid var(--border)'}}>
-          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:13,letterSpacing:'0.05em',marginBottom:6}}>EXPORT</div>
-          <div style={{fontSize:13,color:'var(--text2)',marginBottom:12}}>Download all your data as a CSV backup.</div>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:13,letterSpacing:'.05em',marginBottom:6}}>EXPORT</div>
+          <div style={{fontSize:13,color:'var(--text2)',marginBottom:12}}>Download all your data as a CSV.</div>
           <button className="btn btn-accent" style={{width:'100%'}} onClick={()=>{exportCSV(data);showToast('Exported!');}}>↓ Export CSV</button>
         </div>
         <div style={{padding:'14px',background:'var(--surface2)',borderRadius:10,border:'1px solid var(--border)'}}>
-          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:13,letterSpacing:'0.05em',marginBottom:6}}>IMPORT</div>
-          <div style={{fontSize:13,color:'var(--text2)',marginBottom:12}}>Restore from a backup. <span style={{color:'var(--danger)'}}>Replaces all data.</span></div>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:13,letterSpacing:'.05em',marginBottom:6}}>IMPORT</div>
+          <div style={{fontSize:13,color:'var(--text2)',marginBottom:12}}>Restore from backup. <span style={{color:'var(--danger)'}}>Replaces all data.</span></div>
           <button className="btn btn-ghost" style={{width:'100%'}} onClick={()=>fileRef.current.click()}>↑ Choose CSV</button>
-          <input ref={fileRef} type="file" accept=".csv" style={{display:'none'}} onChange={handleFile} />
-          {err && <div style={{color:'var(--danger)',fontSize:13,marginTop:10}}>{err}</div>}
-          {preview && (
+          <input ref={fileRef} type="file" accept=".csv" style={{display:'none'}} onChange={handleFile}/>
+          {err&&<div style={{color:'var(--danger)',fontSize:13,marginTop:10}}>{err}</div>}
+          {preview&&(
             <div style={{marginTop:12,padding:'12px',background:'var(--surface3)',borderRadius:8}}>
-              <div style={{fontSize:13,color:'var(--text2)',marginBottom:10}}>
-                Found <b style={{color:'var(--accent)'}}>{preview.dc} days</b> and <b style={{color:'var(--accent)'}}>{preview.sc} sessions</b>.
-              </div>
+              <div style={{fontSize:13,color:'var(--text2)',marginBottom:10}}>Found <b style={{color:'var(--accent)'}}>{preview.dc} days</b> and <b style={{color:'var(--accent)'}}>{preview.sc} sessions</b>.</div>
               <button className="btn btn-accent" style={{width:'100%'}} onClick={()=>{persist({...INITIAL,...preview.p});onClose();showToast('Imported!');}}>Confirm Import</button>
             </div>
           )}
@@ -700,38 +728,315 @@ function DataModal({ data, persist, showToast, onClose }) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// STATS PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function StatsPage({ data, persist, showToast, go }) {
+  // Build unique exercise list from all sessions + routine
+  const allExercises=useMemo(()=>{
+    const map={};
+    Object.values(data.routine).forEach(day=>(day.exercises||[]).forEach(ex=>{map[ex.id]={...ex};}));
+    // also capture exercises from sessions that may have been removed from routine
+    data.sessions.forEach(s=>{
+      const exs=data.routine[s.dayNum]?.exercises||[];
+      exs.forEach(ex=>{if(!map[ex.id])map[ex.id]={...ex};});
+    });
+    return Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
+  },[data]);
+
+  const totalSessions=data.sessions.length;
+  const latestBW=(data.bodyWeights||[]).sort((a,b)=>b.date.localeCompare(a.date))[0];
+
+  return (
+    <div className="page">
+      <div className="back-header">
+        <button className="back-btn" onClick={()=>go('home')}>←</button>
+        <h2>Stats</h2>
+      </div>
+
+      {/* Summary blocks */}
+      <div style={{display:'flex',gap:12,padding:'16px 16px 0'}}>
+        <div className="stat-block" style={{cursor:'default'}}>
+          <div className="stat-val">{totalSessions}</div>
+          <div className="stat-lbl">Sessions logged</div>
+        </div>
+        <div className="stat-block" onClick={()=>go('bodyweight')}>
+          <div className="stat-val">{latestBW?`${latestBW.weight}`:'—'}</div>
+          <div className="stat-lbl">Body weight (kg) ›</div>
+        </div>
+      </div>
+
+      {/* Exercise list */}
+      <div style={{padding:'20px 16px 0'}}>
+        <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.09em',color:'var(--text3)',marginBottom:10}}>EXERCISES</div>
+        {allExercises.length===0&&<div style={{color:'var(--text3)',fontSize:14,padding:'20px 0'}}>No exercises in your routine yet.</div>}
+        {allExercises.map(ex=>{
+          // Find most recent session entry
+          let latestEntry=null;
+          for(let i=data.sessions.length-1;i>=0;i--){
+            const s=data.sessions[i];
+            const e=s.entries?.find(e=>e.exerciseId===ex.id);
+            if(e){latestEntry={...e,date:s.date};break;}
+          }
+          return (
+            <div key={ex.id} onClick={()=>go('exercise-detail',ex.id)} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 0',borderBottom:'1px solid var(--border)',cursor:'pointer'}}>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:16,color:'var(--text)'}}>{ex.name}</div>
+                {latestEntry?(
+                  <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',marginTop:2}}>{latestEntry.sets}×{latestEntry.reps} @{latestEntry.weight}kg · {fmtShort(latestEntry.date)}</div>
+                ):<div style={{fontSize:12,color:'var(--text3)',marginTop:2}}>No sessions yet</div>}
+              </div>
+              <div style={{color:'var(--text3)',fontSize:16,flexShrink:0}}>›</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// EXERCISE DETAIL PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function ExerciseDetailPage({ data, exerciseId, goBack }) {
+  // Find exercise definition
+  let ex=null;
+  for(const day of Object.values(data.routine)){const f=(day.exercises||[]).find(e=>e.id===exerciseId);if(f){ex=f;break;}}
+
+  // All entries for this exercise across sessions, sorted asc
+  const allEntries=useMemo(()=>{
+    const entries=[];
+    data.sessions.forEach(s=>{const e=s.entries?.find(e=>e.exerciseId===exerciseId);if(e)entries.push({...e,date:s.date,dayNum:s.dayNum});});
+    return entries.sort((a,b)=>a.date.localeCompare(b.date));
+  },[data,exerciseId]);
+
+  const latest=allEntries[allEntries.length-1];
+  const maxWeight=allEntries.length?Math.max(...allEntries.map(e=>e.weight||0)):null;
+
+  if(!ex)return(
+    <div className="page">
+      <div className="back-header"><button className="back-btn" onClick={goBack}>←</button><h2>Exercise</h2></div>
+      <div style={{padding:'40px 16px',color:'var(--text3)',textAlign:'center'}}>Exercise not found.</div>
+    </div>
+  );
+
+  return (
+    <div className="page">
+      <div className="back-header">
+        <button className="back-btn" onClick={goBack}>←</button>
+        <h2>{ex.name}</h2>
+      </div>
+      <div style={{padding:'16px'}}>
+        {/* Recent & max */}
+        <div style={{display:'flex',gap:12,marginBottom:20}}>
+          <div style={{flex:1,background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:12,padding:'14px'}}>
+            <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.07em',color:'var(--text3)',marginBottom:6}}>MOST RECENT</div>
+            {latest?(
+              <>
+                <div style={{fontFamily:'var(--font-display)',fontSize:24,fontWeight:700,color:'var(--text)'}}>{latest.sets}×{latest.reps}</div>
+                <div style={{fontFamily:'var(--font-mono)',fontSize:14,color:'var(--accent2)',marginTop:2}}>@{latest.weight}kg</div>
+                <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--text3)',marginTop:4}}>{fmtShort(latest.date)}</div>
+              </>
+            ):<div style={{color:'var(--text3)',fontSize:14}}>No logs yet</div>}
+          </div>
+          <div style={{flex:1,background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:12,padding:'14px'}}>
+            <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.07em',color:'var(--text3)',marginBottom:6}}>MAX WEIGHT</div>
+            {maxWeight!=null?(
+              <div style={{fontFamily:'var(--font-display)',fontSize:28,fontWeight:700,color:'var(--accent)'}}>{maxWeight}<span style={{fontSize:16,fontWeight:400}}> kg</span></div>
+            ):<div style={{color:'var(--text3)',fontSize:14}}>—</div>}
+          </div>
+        </div>
+
+        {/* Range */}
+        <div className="exercise-meta" style={{marginBottom:20}}>
+          <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
+        </div>
+
+        {/* WIP graph section */}
+        <div style={{marginBottom:20}}>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.07em',color:'var(--text3)',marginBottom:10}}>PROGRESS OVER TIME</div>
+          <div className="wip">🚧 Charts coming soon</div>
+        </div>
+
+        {/* Session history */}
+        <div>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.07em',color:'var(--text3)',marginBottom:10}}>ALL SESSIONS</div>
+          {allEntries.length===0&&<div style={{color:'var(--text3)',fontSize:14}}>No sessions logged for this exercise.</div>}
+          {[...allEntries].reverse().map((e,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',padding:'9px 0',borderBottom:'1px solid var(--border)'}}>
+              <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',minWidth:72}}>{fmtShort(e.date)}</div>
+              <div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--text)'}}>{e.sets}×{e.reps} <span style={{color:'var(--accent2)'}}>@{e.weight}kg</span></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// BODY WEIGHT PAGE
+// ══════════════════════════════════════════════════════════════════════════════
+function BodyWeightPage({ data, persist, showToast, goBack }) {
+  const [logDate,setLogDate]=useState(todayDateStr());
+  const [logWeight,setLogWeight]=useState('');
+  const [photoData,setPhotoData]=useState(null);
+  const [photoKey,setPhotoKey]=useState(null);
+  const [err,setErr]=useState('');
+  const [viewPhoto,setViewPhoto]=useState(null); // dataUrl to show
+  const photoRef=useRef();
+  const bwSorted=[...(data.bodyWeights||[])].sort((a,b)=>b.date.localeCompare(a.date));
+
+  function handlePhoto(e){
+    const f=e.target.files[0];if(!f)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{setPhotoData(ev.target.result);setPhotoKey(uuid());};
+    reader.readAsDataURL(f);
+  }
+
+  function logBodyWeight(){
+    if(!logWeight||isNaN(+logWeight)){setErr('Enter a valid weight');return;}
+    const photos={...(data.weightPhotos||{})};
+    if(photoData&&photoKey)photos[photoKey]=photoData;
+    const entry={id:uuid(),date:logDate,weight:+logWeight,...(photoKey?{photoKey}:{})};
+    const updated={...data,bodyWeights:[...(data.bodyWeights||[]),entry],weightPhotos:photos};
+    persist(updated);setLogWeight('');setPhotoData(null);setPhotoKey(null);setErr('');showToast('Weight logged!');
+  }
+
+  // Minimal SVG line chart
+  const chartEntries=[...(data.bodyWeights||[])].sort((a,b)=>a.date.localeCompare(b.date));
+  function renderChart(){
+    if(chartEntries.length<2)return null;
+    const weights=chartEntries.map(e=>e.weight);
+    const minW=Math.min(...weights),maxW=Math.max(...weights),range=maxW-minW||1;
+    const W=320,H=80,PAD=8;
+    const pts=chartEntries.map((e,i)=>{
+      const x=PAD+(i/(chartEntries.length-1))*(W-2*PAD);
+      const y=H-PAD-((e.weight-minW)/range)*(H-2*PAD);
+      return`${x},${y}`;
+    });
+    return (
+      <svg viewBox={`0 0 ${W} ${H}`} style={{width:'100%',height:80,display:'block'}}>
+        <polyline points={pts.join(' ')} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round"/>
+        {chartEntries.map((e,i)=>{
+          const [x,y]=pts[i].split(',').map(Number);
+          return <circle key={i} cx={x} cy={y} r="3" fill="var(--accent)"/>;
+        })}
+      </svg>
+    );
+  }
+
+  return (
+    <div className="page">
+      <div className="back-header">
+        <button className="back-btn" onClick={goBack}>←</button>
+        <h2>Body Weight</h2>
+      </div>
+      <div style={{padding:'16px'}}>
+        {/* Log form */}
+        <div style={{background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:12,padding:'16px',marginBottom:16}}>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:13,letterSpacing:'.06em',color:'var(--text)',marginBottom:12}}>LOG WEIGHT</div>
+          <div className="form-grid" style={{marginBottom:12}}>
+            <div>
+              <label>Date</label>
+              <input type="date" value={logDate} onChange={e=>setLogDate(e.target.value)} max={todayDateStr()}/>
+            </div>
+            <div>
+              <label>Weight (kg)</label>
+              <input type="number" step="0.1" placeholder="e.g. 82.5" value={logWeight} onChange={e=>{setLogWeight(e.target.value);setErr('');}}/>
+            </div>
+          </div>
+          <button className="btn btn-ghost btn-sm" style={{marginBottom:10}} onClick={()=>setLogDate(todayDateStr())}>Today ↩</button>
+          <div style={{marginBottom:12}}>
+            <label>Photo (optional)</label>
+            <button className="btn btn-ghost" style={{width:'100%',justifyContent:'flex-start'}} onClick={()=>photoRef.current.click()}>
+              {photoData?'📷 Photo selected — tap to change':'📷 Add a photo'}
+            </button>
+            <input ref={photoRef} type="file" accept="image/*" style={{display:'none'}} onChange={handlePhoto}/>
+          </div>
+          {photoData&&<img src={photoData} alt="preview" style={{width:'100%',borderRadius:8,marginBottom:12,maxHeight:200,objectFit:'cover'}}/>}
+          {err&&<div style={{color:'var(--danger)',fontSize:13,marginBottom:8}}>{err}</div>}
+          <button className="btn btn-accent" style={{width:'100%',padding:'13px'}} onClick={logBodyWeight}>Save</button>
+        </div>
+
+        {/* Chart */}
+        {chartEntries.length>=2&&(
+          <div style={{background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:12,padding:'14px',marginBottom:16}}>
+            <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.07em',color:'var(--text3)',marginBottom:10}}>WEIGHT OVER TIME</div>
+            {renderChart()}
+            <div style={{display:'flex',justifyContent:'space-between',fontFamily:'var(--font-mono)',fontSize:10,color:'var(--text3)',marginTop:4}}>
+              <span>{fmtShort(chartEntries[0].date)}</span>
+              <span>{fmtShort(chartEntries[chartEntries.length-1].date)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Log list */}
+        <div>
+          <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.07em',color:'var(--text3)',marginBottom:10}}>ALL ENTRIES</div>
+          {bwSorted.length===0&&<div style={{color:'var(--text3)',fontSize:14}}>No entries yet.</div>}
+          {bwSorted.map(entry=>{
+            const photo=(data.weightPhotos||{})[entry.photoKey];
+            return (
+              <div key={entry.id} onClick={()=>{if(photo)setViewPhoto(photo);}} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)',cursor:photo?'pointer':'default'}}>
+                <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',minWidth:72}}>{fmtShort(entry.date)}</div>
+                <div style={{flex:1,fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,color:'var(--text)'}}>{entry.weight} kg</div>
+                {photo&&<div style={{fontSize:18}}>🖼</div>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Photo viewer */}
+      {viewPhoto&&(
+        <div className="modal-backdrop center" onClick={()=>setViewPhoto(null)}>
+          <div style={{maxWidth:440,width:'100%',padding:'0 16px'}} onClick={e=>e.stopPropagation()}>
+            <img src={viewPhoto} alt="Progress" style={{width:'100%',borderRadius:16,display:'block'}}/>
+            <button className="btn btn-ghost" style={{width:'100%',marginTop:12}} onClick={()=>setViewPhoto(null)}>Close</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // ROUTINE PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 function RoutinePage({ data, persist, showToast, goBack }) {
-  const [addDayOpen,  setAddDayOpen]  = useState(false);
-  const [addExDay,    setAddExDay]    = useState(null);
-  const [editDayNum,  setEditDayNum]  = useState(null);
-  const dayNums = Object.keys(data.routine).sort();
+  const [addDayOpen,setAddDayOpen]=useState(false);
+  const [addExDay,setAddExDay]=useState(null);
+  const [editDayNum,setEditDayNum]=useState(null);
+  const [collapsed,setCollapsed]=useState({});
+  const addBtnRefs=useRef({});
+  const dayNums=Object.keys(data.routine).sort();
 
-  function addDay(name) {
-    const nums = Object.keys(data.routine).map(Number);
-    const next = nums.length ? Math.max(...nums)+1 : 1;
-    if (next>5) return;
-    persist({...data, routine:{...data.routine,[String(next)]:{name,exercises:[]}}});
-    setAddDayOpen(false); showToast(`Day ${next} added`);
+  function toggleCollapse(d){setCollapsed(prev=>({...prev,[d]:!prev[d]}));}
+
+  function addDay(name){
+    const nums=Object.keys(data.routine).map(Number),next=nums.length?Math.max(...nums)+1:1;
+    if(next>5)return;
+    persist({...data,routine:{...data.routine,[String(next)]:{name,exercises:[]}}});
+    setAddDayOpen(false);showToast(`${name} added`);
   }
-  function removeDay(d) {
-    const r={...data.routine}; delete r[d];
-    const ren={}; Object.keys(r).sort().forEach((k,i)=>{ren[String(i+1)]=r[k];});
-    persist({...data, routine:ren}); showToast('Day removed');
+  function removeDay(d){
+    const r={...data.routine};delete r[d];
+    const ren={};Object.keys(r).sort().forEach((k,i)=>{ren[String(i+1)]=r[k];});
+    persist({...data,routine:ren});showToast('Day removed');
   }
-  function renameDay(d,name) {
-    persist({...data, routine:{...data.routine,[d]:{...data.routine[d],name}}});
-    setEditDayNum(null);
+  function renameDay(d,name){
+    persist({...data,routine:{...data.routine,[d]:{...data.routine[d],name}}});setEditDayNum(null);
   }
-  function addExercise(d,ex) {
+  function addExercise(d,ex){
     const day=data.routine[d]||{name:'',exercises:[]};
-    persist({...data, routine:{...data.routine,[d]:{...day,exercises:[...day.exercises,{...ex,id:uuid()}]}}});
-    setAddExDay(null); showToast('Exercise added');
+    persist({...data,routine:{...data.routine,[d]:{...day,exercises:[...day.exercises,{...ex,id:uuid()}]}}});
+    setAddExDay(null);showToast('Exercise added');
+    // Scroll the add button into view
+    setTimeout(()=>{addBtnRefs.current[d]?.scrollIntoView({behavior:'smooth',block:'end'});},150);
   }
-  function removeEx(d,exId) {
+  function removeEx(d,exId){
     const day=data.routine[d];
-    persist({...data, routine:{...data.routine,[d]:{...day,exercises:day.exercises.filter(e=>e.id!==exId)}}});
+    persist({...data,routine:{...data.routine,[d]:{...day,exercises:day.exercises.filter(e=>e.id!==exId)}}});
     showToast('Removed');
   }
 
@@ -740,88 +1045,100 @@ function RoutinePage({ data, persist, showToast, goBack }) {
       <div className="back-header">
         <button className="back-btn" onClick={goBack}>←</button>
         <h2>My Routine</h2>
-        {dayNums.length<5 && <button className="btn btn-accent btn-sm" style={{marginLeft:'auto'}} onClick={()=>setAddDayOpen(true)}>+ Day</button>}
+        {dayNums.length<5&&<button className="btn btn-accent btn-sm" style={{marginLeft:'auto'}} onClick={()=>setAddDayOpen(true)}>+ Day</button>}
       </div>
-
-      {dayNums.length===0 && (
+      {dayNums.length===0&&(
         <div style={{textAlign:'center',padding:'60px 24px',color:'var(--text3)'}}>
           <div style={{fontSize:44,marginBottom:14}}>📋</div>
           <p style={{fontSize:16}}>No days yet.<br/>Add your first training day above.</p>
         </div>
       )}
-
-      {dayNums.map(d => (
-        <div key={d} className="day-section">
-          <div className="day-label">
-            <span>
-              Day {d}
-              {data.routine[d]?.name && <span style={{fontWeight:400, color:'var(--text2)', fontSize:15}}> — {data.routine[d].name}</span>}
-            </span>
-            <div style={{display:'flex',gap:8}}>
-              <button className="btn btn-ghost btn-sm" onClick={()=>setEditDayNum(d)}>✏️</button>
-              <button className="btn btn-danger btn-sm" onClick={()=>removeDay(d)}>✕</button>
-            </div>
-          </div>
-          {(data.routine[d]?.exercises||[]).map(ex => (
-            <div key={ex.id} className="exercise-item">
-              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
-                <div>
-                  <div className="exercise-name">{ex.name}</div>
-                  <div className="exercise-meta">
-                    <span className="pill accent">{ex.minSets}–{ex.maxSets} sets</span>
-                    <span className="pill info">{ex.minReps}–{ex.maxReps} reps</span>
-                  </div>
-                </div>
-                <button className="btn btn-danger btn-sm" style={{marginLeft:8,flexShrink:0}} onClick={()=>removeEx(d,ex.id)}>✕</button>
+      {dayNums.map(d=>{
+        const isCollapsed=collapsed[d];
+        const dayName=data.routine[d]?.name||`Day ${d}`;
+        return (
+          <div key={d} className="day-section">
+            <div className="day-label-row" onClick={()=>toggleCollapse(d)}>
+              <span style={{flex:1}}>{dayName}</span>
+              <div style={{display:'flex',gap:8,alignItems:'center'}} onClick={e=>e.stopPropagation()}>
+                <button className="btn btn-ghost btn-sm" onClick={()=>setEditDayNum(d)}>✏️</button>
+                <button className="btn btn-danger btn-sm" onClick={()=>removeDay(d)}>✕</button>
               </div>
+              <span style={{fontSize:16,color:'var(--text3)',marginLeft:8,flexShrink:0}}>{isCollapsed?'▸':'▾'}</span>
             </div>
-          ))}
-          <button className="btn btn-ghost" style={{width:'100%',marginTop:4}} onClick={()=>setAddExDay(d)}>+ Add exercise to Day {d}</button>
-        </div>
-      ))}
-
-      {addDayOpen  && <AddDayModal nextDay={dayNums.length+1} onClose={()=>setAddDayOpen(false)} onSave={addDay} />}
-      {addExDay    && <AddExerciseModal dayNum={addExDay} onClose={()=>setAddExDay(null)} onSave={ex=>addExercise(addExDay,ex)} />}
-      {editDayNum  && <EditDayModal dayNum={editDayNum} currentName={data.routine[editDayNum]?.name||''} onClose={()=>setEditDayNum(null)} onSave={n=>renameDay(editDayNum,n)} />}
+            {!isCollapsed&&(
+              <div style={{paddingTop:12}}>
+                {(data.routine[d]?.exercises||[]).map(ex=>(
+                  <div key={ex.id} className="exercise-item">
+                    <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
+                      <div>
+                        <div className="exercise-name">{ex.name}</div>
+                        <div className="exercise-meta">
+                          <span className="pill accent">{ex.minSets}–{ex.maxSets} sets</span>
+                          <span className="pill info">{ex.minReps}–{ex.maxReps} reps</span>
+                        </div>
+                      </div>
+                      <button className="btn btn-danger btn-sm" style={{marginLeft:8,flexShrink:0}} onClick={()=>removeEx(d,ex.id)}>✕</button>
+                    </div>
+                  </div>
+                ))}
+                <div ref={el=>addBtnRefs.current[d]=el}>
+                  <button className="btn btn-ghost" style={{width:'100%',marginTop:4,marginBottom:8}} onClick={()=>setAddExDay(d)}>
+                    + Add exercise to {dayName}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {addDayOpen&&<AddDayModal onClose={()=>setAddDayOpen(false)} onSave={addDay}/>}
+      {addExDay&&<AddExerciseModal dayNum={addExDay} dayName={data.routine[addExDay]?.name} onClose={()=>setAddExDay(null)} onSave={ex=>addExercise(addExDay,ex)}/>}
+      {editDayNum&&<EditDayModal dayNum={editDayNum} currentName={data.routine[editDayNum]?.name||''} onClose={()=>setEditDayNum(null)} onSave={n=>renameDay(editDayNum,n)}/>}
     </div>
   );
 }
 
-function AddDayModal({ nextDay, onClose, onSave }) {
-  const [name,setName]=useState('');
+function AddDayModal({ onClose, onSave }) {
+  const [name,setName]=useState(''),[err,setErr]=useState('');
+  function submit(){if(!name.trim()){setErr('Name required');return;}onSave(name.trim());}
   return (
     <div className="modal-backdrop" onClick={onClose}><div className="modal" onClick={e=>e.stopPropagation()}>
-      <div className="modal-handle" />
-      <div className="modal-title">Add Day {nextDay}</div>
-      <div className="form-row"><label>Day Name (optional)</label><input placeholder="e.g. Push Day, Legs…" value={name} onChange={e=>setName(e.target.value)} /></div>
-      <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={()=>onSave(name)}>Add Day</button>
+      <div className="modal-handle"/>
+      <div className="modal-title">Add Training Day</div>
+      <div className="form-row">
+        <label>Day Name</label>
+        <input placeholder="e.g. Push Day, Legs, Pull…" value={name} onChange={e=>{setName(e.target.value);setErr('');}}/>
+        {err&&<div style={{color:'var(--danger)',fontSize:13,marginTop:6}}>{err}</div>}
+      </div>
+      <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={submit}>Add Day</button>
       <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
     </div></div>
   );
 }
 
 function EditDayModal({ dayNum, currentName, onClose, onSave }) {
-  const [name,setName]=useState(currentName);
+  const [name,setName]=useState(currentName),[err,setErr]=useState('');
+  function submit(){if(!name.trim()){setErr('Name required');return;}onSave(name.trim());}
   return (
     <div className="modal-backdrop" onClick={onClose}><div className="modal" onClick={e=>e.stopPropagation()}>
-      <div className="modal-handle" />
-      <div className="modal-title">Rename Day {dayNum}</div>
-      <div className="form-row"><label>Name</label><input value={name} onChange={e=>setName(e.target.value)} /></div>
-      <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={()=>onSave(name)}>Save</button>
+      <div className="modal-handle"/>
+      <div className="modal-title">Rename Day</div>
+      <div className="form-row">
+        <label>Name</label>
+        <input value={name} onChange={e=>{setName(e.target.value);setErr('');}}/>
+        {err&&<div style={{color:'var(--danger)',fontSize:13,marginTop:6}}>{err}</div>}
+      </div>
+      <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={submit}>Save</button>
       <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
     </div></div>
   );
 }
 
-function AddExerciseModal({ dayNum, onClose, onSave }) {
-  const [name,setName]=useState('');
-  const [minSets,setMinSets]=useState(3);
-  const [maxSets,setMaxSets]=useState(4);
-  const [minReps,setMinReps]=useState(8);
-  const [maxReps,setMaxReps]=useState(12);
-  const [err,setErr]=useState('');
+function AddExerciseModal({ dayNum, dayName, onClose, onSave }) {
+  const [name,setName]=useState(''),[minSets,setMinSets]=useState(3),[maxSets,setMaxSets]=useState(4),[minReps,setMinReps]=useState(8),[maxReps,setMaxReps]=useState(12),[err,setErr]=useState('');
   const PRESETS=['Bench Press','Squat','Deadlift','OHP','Pull-ups','Barbell Row','Lunges','Bicep Curls','Tricep Dips','Lat Pulldown','Leg Press','Cable Fly','Incline Press','Romanian Deadlift'];
-  function submit() {
+  function submit(){
     if(!name.trim()){setErr('Name required');return;}
     if(minSets>maxSets){setErr('Min sets > max');return;}
     if(minReps>maxReps){setErr('Min reps > max');return;}
@@ -829,36 +1146,36 @@ function AddExerciseModal({ dayNum, onClose, onSave }) {
   }
   return (
     <div className="modal-backdrop" onClick={onClose}><div className="modal" onClick={e=>e.stopPropagation()}>
-      <div className="modal-handle" />
+      <div className="modal-handle"/>
       <div className="modal-title">Add Exercise</div>
-      <div className="modal-sub">Day {dayNum}</div>
+      <div className="modal-sub">{dayName||`Day ${dayNum}`}</div>
       <div className="form-row">
         <label>Name</label>
-        <input placeholder="e.g. Bench Press" value={name} onChange={e=>{setName(e.target.value);setErr('');}} />
+        <input placeholder="e.g. Bench Press" value={name} onChange={e=>{setName(e.target.value);setErr('');}}/>
         <div className="tag-row">{PRESETS.map(p=><span key={p} className={`tag${name===p?' selected':''}`} onClick={()=>setName(p)}>{p}</span>)}</div>
       </div>
       <div className="form-row">
         <label>Sets Range</label>
         <div className="form-grid">
-          <div><label>Min</label><Stepper value={minSets} min={1} max={maxSets} onChange={setMinSets} /></div>
-          <div><label>Max</label><Stepper value={maxSets} min={minSets} max={10} onChange={setMaxSets} /></div>
+          <div><label>Min</label><Stepper value={minSets} min={1} max={maxSets} onChange={setMinSets}/></div>
+          <div><label>Max</label><Stepper value={maxSets} min={minSets} max={10} onChange={setMaxSets}/></div>
         </div>
       </div>
       <div className="form-row">
         <label>Reps Range</label>
         <div className="form-grid">
-          <div><label>Min</label><Stepper value={minReps} min={1} max={maxReps} onChange={setMinReps} /></div>
-          <div><label>Max</label><Stepper value={maxReps} min={minReps} max={50} onChange={setMaxReps} /></div>
+          <div><label>Min</label><Stepper value={minReps} min={1} max={maxReps} onChange={setMinReps}/></div>
+          <div><label>Max</label><Stepper value={maxReps} min={minReps} max={50} onChange={setMaxReps}/></div>
         </div>
       </div>
-      {err && <div style={{color:'var(--danger)',fontSize:13,marginBottom:12}}>{err}</div>}
+      {err&&<div style={{color:'var(--danger)',fontSize:13,marginBottom:12}}>{err}</div>}
       <button className="btn btn-accent" style={{width:'100%',padding:'14px'}} onClick={submit}>Add Exercise</button>
       <button className="btn btn-ghost" style={{width:'100%',padding:'14px',marginTop:10}} onClick={onClose}>Cancel</button>
     </div></div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
