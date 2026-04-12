@@ -131,6 +131,35 @@ function Stepper({ value, onChange, min=0, max=999, step=1 }) {
 }
 function Toast({ msg }) { return <div className={`toast${msg?' show':''}`}>{msg}</div>; }
 
+// ── Swipe helpers ─────────────────────────────────────────────────────────────
+function useSwipeBack(onBack) {
+  const ref = useRef({x:null, y:null});
+  return {
+    onTouchStart: e => { ref.current = {x:e.touches[0].clientX, y:e.touches[0].clientY}; },
+    onTouchEnd: e => {
+      if(ref.current.x===null) return;
+      const dx = e.changedTouches[0].clientX - ref.current.x;
+      const dy = Math.abs(e.changedTouches[0].clientY - ref.current.y);
+      ref.current = {x:null, y:null};
+      // right swipe, not too vertical, started from left 30% of screen
+      if(dx > 60 && dy < 100) onBack();
+    }
+  };
+}
+function useSwipeDownClose(onClose) {
+  const ref = useRef({y:null, startX:null});
+  return {
+    onTouchStart: e => { ref.current = {y:e.touches[0].clientY, startX:e.touches[0].clientX}; },
+    onTouchEnd: e => {
+      if(ref.current.y===null) return;
+      const dy = e.changedTouches[0].clientY - ref.current.y;
+      const dx = Math.abs(e.changedTouches[0].clientX - ref.current.startX);
+      ref.current = {y:null, startX:null};
+      if(dy > 80 && dx < 60) onClose();
+    }
+  };
+}
+
 // ── CSV ───────────────────────────────────────────────────────────────────────
 function exportCSV(data) {
   const q=v=>`"${String(v).replace(/"/g,'""')}"`, row=r=>r.map(q).join(',');
@@ -238,7 +267,8 @@ function HomePage({ data, persist, showToast, go }) {
   function commitSession(overrideDate){
     const date=overrideDate?new Date(overrideDate+'T12:00:00').toISOString():new Date().toISOString();
     const session={id:uuid(),date,dayNum:data.draftSession.dayNum,entries:data.draftSession.entries};
-    persist({...data,sessions:[...data.sessions,session],draftSession:null});
+    const sorted=[...data.sessions,session].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    persist({...data,sessions:sorted,draftSession:null});
     setWorkoutOpen(false);showToast('Workout saved!');
   }
   function discardDraft(){persist({...data,draftSession:null});setWorkoutOpen(false);}
@@ -355,7 +385,7 @@ function HomePage({ data, persist, showToast, go }) {
       {data.sessions.length>0&&(
         <div style={{margin:'0 16px'}}>
           <div style={{fontFamily:'var(--font-display)',fontWeight:600,fontSize:12,letterSpacing:'.09em',color:'var(--text3)',marginBottom:10}}>RECENT SESSIONS</div>
-          {[...data.sessions].reverse().slice(0,5).map(s=>(
+          {[...data.sessions].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8).map(s=>(
             <div key={s.id} onClick={()=>setCalModal({dateStr:toDateStr(s.date),isPast:toDateStr(s.date)<todayStr,hasSessions:true})}
               style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)',cursor:'pointer'}}>
               <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',minWidth:68}}>{fmtShort(s.date)}</div>
@@ -372,22 +402,41 @@ function HomePage({ data, persist, showToast, go }) {
       )}
 
       {/* Modals */}
-      {dayPickOpen&&(
-        <div className="modal-backdrop" onClick={()=>setDayPickOpen(false)}>
-          <div className="modal" onClick={e=>e.stopPropagation()}>
-            <div className="modal-handle"/>
-            <div className="modal-title">Which day?</div>
-            <div className="modal-sub">Choose the routine day you're training.</div>
-            {dayNums.map(d=>(
-              <button key={d} onClick={()=>startDraft(d)} style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'flex-start',background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:10,padding:'14px 16px',marginBottom:10,cursor:'pointer',gap:3}}>
-                <span style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,letterSpacing:'.04em',color:'var(--text)'}}>{data.routine[d]?.name||`Day ${d}`}</span>
-                <span style={{fontFamily:'var(--font-body)',fontSize:13,color:'var(--text3)'}}>{(data.routine[d]?.exercises||[]).map(e=>e.name).join(', ')}</span>
-              </button>
-            ))}
-            <button className="btn btn-ghost" style={{width:'100%',padding:'12px'}} onClick={()=>setDayPickOpen(false)}>Cancel</button>
+      {dayPickOpen&&(()=>{
+        // compute next due day by finding last session's dayNum and picking the next in rotation
+        const sortedSessions=[...data.sessions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+        let nextDueDay=null;
+        if(sortedSessions.length&&dayNums.length){
+          const lastDayNum=String(sortedSessions[0].dayNum);
+          const idx=dayNums.indexOf(lastDayNum);
+          nextDueDay=dayNums[(idx===-1?0:idx+1)%dayNums.length];
+        } else if(dayNums.length){
+          nextDueDay=dayNums[0];
+        }
+        const swipeDown={
+          onTouchStart:e=>{swipeRef.current._dy=e.touches[0].clientY;},
+          onTouchEnd:e=>{const dy=e.changedTouches[0].clientY-(swipeRef.current._dy||0);if(dy>80)setDayPickOpen(false);}
+        };
+        return (
+          <div className="modal-backdrop" onClick={()=>setDayPickOpen(false)}>
+            <div className="modal" onClick={e=>e.stopPropagation()} {...swipeDown}>
+              <div className="modal-handle"/>
+              <div className="modal-title">Which day?</div>
+              <div className="modal-sub">Choose the routine day you're training.</div>
+              {dayNums.map(d=>{
+                const isDue=d===nextDueDay;
+                return (
+                  <button key={d} onClick={()=>startDraft(d)} style={{width:'100%',display:'flex',flexDirection:'column',alignItems:'flex-start',background:isDue?'rgba(200,255,0,.07)':'var(--surface2)',border:isDue?'1px solid rgba(200,255,0,.45)':'1px solid var(--border)',borderRadius:10,padding:'14px 16px',marginBottom:10,cursor:'pointer',gap:3,position:'relative'}}>
+                    <span style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:17,letterSpacing:'.04em',color:isDue?'var(--accent)':'var(--text)'}}>{data.routine[d]?.name||`Day ${d}`}{isDue&&<span style={{marginLeft:8,fontSize:11,fontFamily:'var(--font-mono)',background:'var(--accent)',color:'#000',borderRadius:4,padding:'2px 6px',verticalAlign:'middle',letterSpacing:'.04em'}}>UP NEXT</span>}</span>
+                    <span style={{fontFamily:'var(--font-body)',fontSize:13,color:'var(--text3)'}}>{(data.routine[d]?.exercises||[]).map(e=>e.name).join(', ')}</span>
+                  </button>
+                );
+              })}
+              <button className="btn btn-ghost" style={{width:'100%',padding:'12px'}} onClick={()=>setDayPickOpen(false)}>Cancel</button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {workoutOpen&&data.draftSession&&(
         <WorkoutModal data={data} draft={data.draftSession} getLatest={getLatest}
@@ -409,22 +458,43 @@ function HomePage({ data, persist, showToast, go }) {
 
 // ── Workout Modal (new session) ────────────────────────────────────────────────
 function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onClose }) {
-  const [activeEx, setActiveEx] = useState(null); // exerciseId for stepper sub-modal
+  const [activeEx, setActiveEx] = useState(null);
+  const [hasEdited, setHasEdited] = useState(false);
   const exercises=data.routine[draft.dayNum]?.exercises||[];
   const dayName=data.routine[draft.dayNum]?.name;
   function getEntry(exId){return draft.entries.find(e=>e.exerciseId===exId)||{};}
 
+  // Swipe down: if no edits made → discard; else → keep as draft
+  const swipeDown = useSwipeDownClose(()=>{ hasEdited ? onClose() : onDiscard(); });
+
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={e=>e.stopPropagation()}>
+    <div className="modal-backdrop" onClick={()=>{ hasEdited ? onClose() : onDiscard(); }}>
+      <div className="modal" onClick={e=>e.stopPropagation()} {...swipeDown}>
         <div className="modal-handle"/>
-        <div style={{marginBottom:20}}>
-          <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--accent)',letterSpacing:'.09em',marginBottom:4}}>● LOGGING WORKOUT</div>
-          <div className="modal-title">{dayName||`Day ${draft.dayNum}`}</div>
-          <div className="modal-sub">Tap an exercise to log your numbers.</div>
+        {/* Top bar: title left, action buttons right */}
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:16,gap:12}}>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--accent)',letterSpacing:'.09em',marginBottom:3}}>● LOGGING WORKOUT</div>
+            <div className="modal-title" style={{marginBottom:2}}>{dayName||`Day ${draft.dayNum}`}</div>
+            <div style={{fontSize:13,color:'var(--text2)'}}>Tap an exercise to log your numbers.</div>
+          </div>
+          <div style={{display:'flex',gap:8,flexShrink:0,paddingTop:2}}>
+            <button
+              onClick={e=>{e.stopPropagation();onDiscard();}}
+              title="Discard workout"
+              style={{background:'transparent',border:'1px solid var(--danger)',borderRadius:8,color:'var(--danger)',width:38,height:38,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:16,flexShrink:0}}>
+              🗑
+            </button>
+            <button
+              onClick={e=>{e.stopPropagation();onSave();}}
+              style={{background:'var(--accent)',border:'none',borderRadius:8,color:'#000',padding:'0 12px',height:38,fontFamily:'var(--font-display)',fontWeight:700,fontSize:13,letterSpacing:'.05em',cursor:'pointer',whiteSpace:'nowrap',flexShrink:0}}>
+              Save
+            </button>
+          </div>
         </div>
+
         {exercises.map(ex=>{
-          const entry=getEntry(ex.id),latest=getLatest(ex.id,draft.dayNum);
+          const entry=getEntry(ex.id);
           const hasData=entry.sets||entry.reps||entry.weight;
           return (
             <div key={ex.id} className="ex-card-clickable" onClick={()=>setActiveEx(ex.id)}>
@@ -433,7 +503,6 @@ function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onC
                   <div className="exercise-name">{ex.name}</div>
                   <div className="exercise-meta">
                     <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
-                    {latest&&<span className="pill accent">Last: {latest.sets}×{latest.reps} @{latest.weight??0}kg</span>}
                   </div>
                 </div>
                 {hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--accent2)',flexShrink:0,textAlign:'right'}}>{entry.sets}×{entry.reps}<br/>@{entry.weight}kg</div>}
@@ -442,9 +511,6 @@ function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onC
             </div>
           );
         })}
-        <button className="btn btn-accent" style={{width:'100%',padding:'15px',fontSize:'16px',marginTop:10,borderRadius:10}} onClick={()=>onSave()}>Save Workout</button>
-        <button className="btn btn-ghost" style={{width:'100%',padding:'12px',marginTop:10}} onClick={onClose}>Keep editing later</button>
-        <button className="btn btn-danger" style={{width:'100%',padding:'10px',marginTop:6,fontSize:'13px'}} onClick={onDiscard}>Discard log</button>
 
         {activeEx&&(()=>{
           const ex=exercises.find(e=>e.id===activeEx),entry=getEntry(activeEx),latest=getLatest(activeEx,draft.dayNum);
@@ -455,14 +521,14 @@ function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onC
                 <div className="modal-title" style={{marginBottom:4}}>{ex.name}</div>
                 <div className="exercise-meta" style={{marginBottom:16}}>
                   <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
-                  {latest&&<span className="pill accent">Last: {latest.sets}×{latest.reps} @{latest.weight??0}kg</span>}
+                  {latest&&<span className="pill info">Last: {latest.sets}×{latest.reps} @{latest.weight??0}kg</span>}
                 </div>
                 <div className="form-grid-3">
                   <div><label>Sets</label><Stepper value={entry.sets??ex.minSets} min={0} max={ex.maxSets+5} onChange={v=>{onUpdate(activeEx,'sets',v);}}/></div>
                   <div><label>Reps</label><Stepper value={entry.reps??ex.minReps} min={0} max={ex.maxReps+20} onChange={v=>{onUpdate(activeEx,'reps',v);}}/></div>
                   <div><label>Weight (kg)</label><Stepper value={entry.weight??0} step={2.5} onChange={v=>{onUpdate(activeEx,'weight',v);}}/></div>
                 </div>
-                <button className="btn btn-accent" style={{width:'100%',padding:'13px',marginTop:14}} onClick={()=>setActiveEx(null)}>Done</button>
+                <button className="btn btn-accent" style={{width:'100%',padding:'13px',marginTop:14}} onClick={()=>{setHasEdited(true);setActiveEx(null);}}>Done</button>
               </div>
             </div>
           );
@@ -502,7 +568,8 @@ function CalDayModal({ dateStr, isPast, hasSessions, sessions, data, persist, sh
   }
   function commitPastSession(){
     const session={id:uuid(),date:new Date(y,m-1,d,12,0,0).toISOString(),dayNum:pastDayNum,entries:pastEntries};
-    persist({...data,sessions:[...data.sessions,session]});
+    const sorted=[...data.sessions,session].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    persist({...data,sessions:sorted});
     showToast('Session added');setAddingWorkout(false);onClose();
   }
   function updatePastEntry(exId,field,val){setPastEntries(prev=>prev.map(e=>e.exerciseId===exId?{...e,[field]:val}:e));}
@@ -731,6 +798,7 @@ function DataModal({ data, persist, showToast, onClose }) {
 // STATS PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 function StatsPage({ data, persist, showToast, go }) {
+  const swipeBack = useSwipeBack(()=>go('home'));
   // Build unique exercise list from all sessions + routine
   const allExercises=useMemo(()=>{
     const map={};
@@ -747,7 +815,7 @@ function StatsPage({ data, persist, showToast, go }) {
   const latestBW=(data.bodyWeights||[]).sort((a,b)=>b.date.localeCompare(a.date))[0];
 
   return (
-    <div className="page">
+    <div className="page" {...swipeBack}>
       <div className="back-header">
         <button className="back-btn" onClick={()=>go('home')}>←</button>
         <h2>Stats</h2>
@@ -798,6 +866,7 @@ function StatsPage({ data, persist, showToast, go }) {
 // EXERCISE DETAIL PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 function ExerciseDetailPage({ data, exerciseId, goBack }) {
+  const swipeBack = useSwipeBack(goBack);
   // Find exercise definition
   let ex=null;
   for(const day of Object.values(data.routine)){const f=(day.exercises||[]).find(e=>e.id===exerciseId);if(f){ex=f;break;}}
@@ -813,14 +882,14 @@ function ExerciseDetailPage({ data, exerciseId, goBack }) {
   const maxWeight=allEntries.length?Math.max(...allEntries.map(e=>e.weight||0)):null;
 
   if(!ex)return(
-    <div className="page">
+    <div className="page" {...swipeBack}>
       <div className="back-header"><button className="back-btn" onClick={goBack}>←</button><h2>Exercise</h2></div>
       <div style={{padding:'40px 16px',color:'var(--text3)',textAlign:'center'}}>Exercise not found.</div>
     </div>
   );
 
   return (
-    <div className="page">
+    <div className="page" {...swipeBack}>
       <div className="back-header">
         <button className="back-btn" onClick={goBack}>←</button>
         <h2>{ex.name}</h2>
@@ -877,6 +946,7 @@ function ExerciseDetailPage({ data, exerciseId, goBack }) {
 // BODY WEIGHT PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 function BodyWeightPage({ data, persist, showToast, goBack }) {
+  const swipeBack = useSwipeBack(goBack);
   const [logDate,setLogDate]=useState(todayDateStr());
   const [logWeight,setLogWeight]=useState('');
   const [photoData,setPhotoData]=useState(null);
@@ -926,7 +996,7 @@ function BodyWeightPage({ data, persist, showToast, goBack }) {
   }
 
   return (
-    <div className="page">
+    <div className="page" {...swipeBack}>
       <div className="back-header">
         <button className="back-btn" onClick={goBack}>←</button>
         <h2>Body Weight</h2>
@@ -1004,6 +1074,7 @@ function BodyWeightPage({ data, persist, showToast, goBack }) {
 // ROUTINE PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 function RoutinePage({ data, persist, showToast, goBack }) {
+  const swipeBack = useSwipeBack(goBack);
   const [addDayOpen,setAddDayOpen]=useState(false);
   const [addExDay,setAddExDay]=useState(null);
   const [editDayNum,setEditDayNum]=useState(null);
@@ -1041,7 +1112,7 @@ function RoutinePage({ data, persist, showToast, goBack }) {
   }
 
   return (
-    <div className="page">
+    <div className="page" {...swipeBack}>
       <div className="back-header">
         <button className="back-btn" onClick={goBack}>←</button>
         <h2>My Routine</h2>
