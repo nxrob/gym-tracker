@@ -109,7 +109,7 @@ export default function CalDayModal({ dateStr, isPast, sessions, data, persist, 
 
   return (
     <Dialog open onOpenChange={open => { if (!open) onClose(); }}>
-      <DialogContent showCloseButton={false} style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', maxWidth: 440 }}>
+      <DialogContent showCloseButton={false} className="gap-0" style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', maxWidth: 440, padding: 'var(--sp-10) var(--sp-8) var(--sp-14)' }}>
         <DialogTitle style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent2)', letterSpacing: '.07em' }}>
           {label.toUpperCase()}
         </DialogTitle>

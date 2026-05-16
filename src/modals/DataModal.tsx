@@ -48,7 +48,14 @@ export default function DataModal({ data, persist, showToast, onClose }: DataMod
         {preview && (
           <div style={{ marginTop: 'var(--sp-6)', padding: 'var(--sp-6)', background: 'var(--surface3)', borderRadius: 'var(--r-md)' }}>
             <div style={{ fontSize: 'var(--text-md)', color: 'var(--text2)', marginBottom: 'var(--sp-5)' }}>Found <b style={{ color: 'var(--accent)' }}>{preview.dc} days</b> and <b style={{ color: 'var(--accent)' }}>{preview.sc} sessions</b>.</div>
-            <Button className="w-full" onClick={() => { persist({ ...INITIAL, ...preview.p } as AppData); onClose(); showToast('Imported!'); }}>Confirm Import</Button>
+            <Button className="w-full" onClick={() => {
+              const imported = preview.p;
+              onClose();
+              setTimeout(() => {
+                persist({ ...INITIAL, ...imported } as AppData);
+                showToast('Imported!');
+              }, 0);
+            }}>Confirm Import</Button>
           </div>
         )}
       </div>
