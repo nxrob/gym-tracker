@@ -246,7 +246,7 @@ function HomePage({ data, persist, showToast, go }) {
   },[data.sessions]);
 
   function getLatest(exerciseId,dayNum) {
-    for(let i=data.sessions.length-1;i>=0;i--){
+    for(let i=0;i<data.sessions.length;i++){
       const s=data.sessions[i];
       if(String(s.dayNum)===String(dayNum)){const e=s.entries?.find(e=>e.exerciseId===exerciseId);if(e)return{...e,date:s.date};}
     }return null;
@@ -494,8 +494,7 @@ function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onC
         </div>
 
         {exercises.map(ex=>{
-          const entry=getEntry(ex.id);
-          const hasData=entry.sets||entry.reps||entry.weight;
+          const entry = draft.entries.find(e=>e.exerciseId===ex.id);
           return (
             <div key={ex.id} className="ex-card-clickable" onClick={()=>setActiveEx(ex.id)}>
               <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
@@ -505,8 +504,8 @@ function WorkoutModal({ data, draft, getLatest, onUpdate, onSave, onDiscard, onC
                     <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
                   </div>
                 </div>
-                {hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--accent2)',flexShrink:0,textAlign:'right'}}>{entry.sets}×{entry.reps}<br/>@{entry.weight}kg</div>}
-                {!hasData&&<div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',flexShrink:0}}>tap</div>}
+                {entry&&<div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--accent2)',flexShrink:0,textAlign:'right'}}>{entry.sets}×{entry.reps}<br/>@{entry.weight}kg</div>}
+                {!entry&&<div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text3)',flexShrink:0}}>tap</div>}
               </div>
             </div>
           );
