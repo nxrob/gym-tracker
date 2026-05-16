@@ -4,6 +4,13 @@ import { uuid } from '../utils';
 import ExerciseEntry from '../components/ExerciseEntry';
 import SessionView from '../components/SessionView';
 import EditSessionModal from './EditSessionModal';
+import { BottomSheet } from '../components/ui/BottomSheet';
+import { Button } from '../components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '../components/ui/dialog';
 
 interface CalDayModalProps {
   dateStr: string;
@@ -65,51 +72,47 @@ export default function CalDayModal({ dateStr, isPast, sessions, data, persist, 
     const exercises = data.routine[pastDayNum]?.exercises || [];
     const dayName = data.routine[pastDayNum]?.name;
     return (
-      <div className="modal-backdrop" onClick={() => setAddingWorkout(false)}>
-        <div className="modal" onClick={e => e.stopPropagation()}>
-          <div className="modal-handle" />
-          <div className="warn-banner">⚠️ You're logging a session in the past for {label}.</div>
-          <div className="modal-title">{dayName || `Day ${pastDayNum}`}</div>
-          <div className="modal-sub">Tap each exercise to enter your numbers.</div>
-          {exercises.map(ex => (
-            <ExerciseEntry
-              key={ex.id}
-              exercise={ex}
-              entry={pastEntries.find(e => e.exerciseId === ex.id) || {}}
-              onUpdate={(field, val) => updatePastEntry(ex.id, field, val)}
-            />
-          ))}
-          <button className="btn btn-accent" style={{ width: '100%', padding: 'var(--sp-7)', marginTop: 'var(--sp-5)', fontSize: 'var(--text-lg)' }} onClick={commitPastSession}>Save Past Session</button>
-          <button className="btn btn-ghost" style={{ width: '100%', padding: 'var(--sp-6)', marginTop: 'var(--sp-5)' }} onClick={() => setAddingWorkout(false)}>Cancel</button>
-        </div>
-      </div>
+      <BottomSheet onClose={() => setAddingWorkout(false)}>
+        <div className="warn-banner">⚠️ You're logging a session in the past for {label}.</div>
+        <div className="modal-title">{dayName || `Day ${pastDayNum}`}</div>
+        <div className="modal-sub">Tap each exercise to enter your numbers.</div>
+        {exercises.map(ex => (
+          <ExerciseEntry
+            key={ex.id}
+            exercise={ex}
+            entry={pastEntries.find(e => e.exerciseId === ex.id) || {}}
+            onUpdate={(field, val) => updatePastEntry(ex.id, field, val)}
+          />
+        ))}
+        <Button className="w-full py-7 mt-3 text-lg" onClick={commitPastSession}>Save Past Session</Button>
+        <Button variant="ghost" className="w-full py-6 mt-3" onClick={() => setAddingWorkout(false)}>Cancel</Button>
+      </BottomSheet>
     );
   }
 
   if (pickDayForPast) {
     return (
-      <div className="modal-backdrop" onClick={() => setPickDayForPast(false)}>
-        <div className="modal" onClick={e => e.stopPropagation()}>
-          <div className="modal-handle" />
-          <div className="warn-banner">⚠️ You're adding a session to a past date: {label}.</div>
-          <div className="modal-title">Which routine day?</div>
-          {dayNums.map(d => (
-            <button key={d} onClick={() => startPastAdd(d)}
-              style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: 'var(--sp-7) var(--sp-8)', marginBottom: 'var(--sp-5)', cursor: 'pointer', gap: 'var(--sp-1)' }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-xl)', color: 'var(--text)' }}>{data.routine[d]?.name || `Day ${d}`}</span>
-              <span style={{ fontSize: 'var(--text-md)', color: 'var(--text3)' }}>{(data.routine[d]?.exercises || []).map(e => e.name).join(', ')}</span>
-            </button>
-          ))}
-          <button className="btn btn-ghost" style={{ width: '100%', padding: 'var(--sp-6)' }} onClick={() => setPickDayForPast(false)}>Cancel</button>
-        </div>
-      </div>
+      <BottomSheet onClose={() => setPickDayForPast(false)}>
+        <div className="warn-banner">⚠️ You're adding a session to a past date: {label}.</div>
+        <div className="modal-title" style={{ marginBottom: 'var(--sp-6)' }}>Which routine day?</div>
+        {dayNums.map(dn => (
+          <button key={dn} onClick={() => startPastAdd(dn)}
+            style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: 'var(--sp-7) var(--sp-8)', marginBottom: 'var(--sp-5)', cursor: 'pointer', gap: 'var(--sp-1)' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-xl)', color: 'var(--text)' }}>{data.routine[dn]?.name || `Day ${dn}`}</span>
+            <span style={{ fontSize: 'var(--text-md)', color: 'var(--text3)' }}>{(data.routine[dn]?.exercises || []).map(e => e.name).join(', ')}</span>
+          </button>
+        ))}
+        <Button variant="ghost" className="w-full py-6" onClick={() => setPickDayForPast(false)}>Cancel</Button>
+      </BottomSheet>
     );
   }
 
   return (
-    <div className="modal-backdrop center" onClick={onClose}>
-      <div className="modal center-modal" onClick={e => e.stopPropagation()}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent2)', letterSpacing: '.07em', marginBottom: 'var(--sp-6)' }}>{label.toUpperCase()}</div>
+    <Dialog open onOpenChange={open => { if (!open) onClose(); }}>
+      <DialogContent showCloseButton={false} style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', maxWidth: 440 }}>
+        <DialogTitle style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent2)', letterSpacing: '.07em' }}>
+          {label.toUpperCase()}
+        </DialogTitle>
         {sessions.length === 0
           ? <div style={{ color: 'var(--text3)', textAlign: 'center', padding: 'var(--sp-8) 0 var(--sp-10)' }}>No sessions on this day.</div>
           : sessions.map(s => (
@@ -122,12 +125,12 @@ export default function CalDayModal({ dateStr, isPast, sessions, data, persist, 
             />
           ))}
         {isPast && dayNums.length > 0 && (
-          <button className="btn btn-warn" style={{ width: '100%', padding: 'var(--sp-6)', marginTop: 'var(--sp-2)' }} onClick={() => setPickDayForPast(true)}>
+          <Button variant="warn" className="w-full py-6 mt-2" onClick={() => setPickDayForPast(true)}>
             + Add past session for this day
-          </button>
+          </Button>
         )}
-        <button className="btn btn-ghost" style={{ width: '100%', padding: 'var(--sp-6)', marginTop: 'var(--sp-4)' }} onClick={onClose}>Close</button>
-      </div>
-    </div>
+        <Button variant="ghost" className="w-full py-6 mt-2" onClick={onClose}>Close</Button>
+      </DialogContent>
+    </Dialog>
   );
 }

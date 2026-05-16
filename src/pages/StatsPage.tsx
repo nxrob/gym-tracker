@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
+import { animated } from '@react-spring/web';
 import type { AppData, Page, SessionEntry } from '../types';
 import { fmtShort } from '../utils';
-import { useSwipeBack } from '../hooks/useSwipeBack';
+import { useSpringPage } from '../hooks/useSpringPage';
 
 interface StatsPageProps {
   data: AppData;
@@ -11,7 +12,7 @@ interface StatsPageProps {
 }
 
 export default function StatsPage({ data, go }: StatsPageProps) {
-  const swipeBack = useSwipeBack(() => go('home'));
+  const { spring, bind, back } = useSpringPage({ onBack: () => go('home') });
 
   const allExercises = useMemo(() => {
     const map: Record<string, AppData['routine'][string]['exercises'][0]> = {};
@@ -27,9 +28,9 @@ export default function StatsPage({ data, go }: StatsPageProps) {
   const latestBW = [...(data.bodyWeights || [])].sort((a, b) => b.date.localeCompare(a.date))[0];
 
   return (
-    <div className="page" {...swipeBack}>
+    <animated.div className="page" {...bind()} style={{ x: spring.x }}>
       <div className="back-header">
-        <button className="back-btn" onClick={() => go('home')}>←</button>
+        <button className="back-btn" onClick={back}>←</button>
         <h2>Stats</h2>
       </div>
 
@@ -68,6 +69,6 @@ export default function StatsPage({ data, go }: StatsPageProps) {
           );
         })}
       </div>
-    </div>
+    </animated.div>
   );
 }

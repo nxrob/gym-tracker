@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { Exercise, SessionEntry } from '../types';
 import Stepper from './Stepper';
+import { BottomSheet } from './ui/BottomSheet';
+import { Button } from './ui/button';
 
 interface ExerciseEntryProps {
   exercise: Exercise;
@@ -36,22 +38,19 @@ export default function ExerciseEntry({ exercise: ex, entry, onUpdate, onDone, l
       </div>
 
       {isOpen && (
-        <div className="modal-backdrop" onClick={() => setIsOpen(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-handle" />
-            <div className="modal-title" style={{ marginBottom: 'var(--sp-2)' }}>{ex.name}</div>
-            <div className="exercise-meta" style={{ marginBottom: 'var(--sp-8)' }}>
-              <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
-              {latest && <span className="pill info">Last: {latest.sets}×{latest.reps} @{latest.weight ?? 0}kg</span>}
-            </div>
-            <div className="form-grid-3">
-              <div><label>Sets</label><Stepper value={entry.sets ?? ex.minSets} min={0} max={ex.maxSets + 5} onChange={v => onUpdate('sets', v)} /></div>
-              <div><label>Reps</label><Stepper value={entry.reps ?? ex.minReps} min={0} max={ex.maxReps + 20} onChange={v => onUpdate('reps', v)} /></div>
-              <div><label>Weight (kg)</label><Stepper value={entry.weight ?? 0} step={2.5} onChange={v => onUpdate('weight', v)} /></div>
-            </div>
-            <button className="btn btn-accent" style={{ width: '100%', padding: 'var(--sp-7)', marginTop: 'var(--sp-7)' }} onClick={handleDone}>Done</button>
+        <BottomSheet onClose={() => setIsOpen(false)}>
+          <div className="modal-title" style={{ marginBottom: 'var(--sp-2)' }}>{ex.name}</div>
+          <div className="exercise-meta" style={{ marginBottom: 'var(--sp-8)' }}>
+            <span className="pill">Range: {ex.minSets}–{ex.maxSets} sets · {ex.minReps}–{ex.maxReps} reps</span>
+            {latest && <span className="pill info">Last: {latest.sets}×{latest.reps} @{latest.weight ?? 0}kg</span>}
           </div>
-        </div>
+          <div className="form-grid-3">
+            <div><label>Sets</label><Stepper value={entry.sets ?? ex.minSets} min={0} max={ex.maxSets + 5} onChange={v => onUpdate('sets', v)} /></div>
+            <div><label>Reps</label><Stepper value={entry.reps ?? ex.minReps} min={0} max={ex.maxReps + 20} onChange={v => onUpdate('reps', v)} /></div>
+            <div><label>Weight (kg)</label><Stepper value={entry.weight ?? 0} step={2.5} onChange={v => onUpdate('weight', v)} /></div>
+          </div>
+          <Button className="w-full py-7 mt-5" onClick={handleDone}>Done</Button>
+        </BottomSheet>
       )}
     </>
   );

@@ -1,4 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useCallback } from 'react';
+import { useSpring, animated } from '@react-spring/web';
+import { useDrag } from '@use-gesture/react';
 import type { Session } from '../types';
 
 interface CalendarProps {
@@ -13,10 +15,38 @@ export default function Calendar({ sessionsByDate, todayStr, onDayClick }: Calen
   const now = new Date();
   const [calYear, setCalYear] = useState(now.getFullYear());
   const [calMonth, setCalMonth] = useState(now.getMonth());
-  const swipeRef = useRef<{ x: number | null }>({ x: null });
+  const [{ x }, api] = useSpring(() => ({ x: 0, config: { tension: 300, friction: 28 } }));
 
-  function prevMonth() { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else setCalMonth(m => m - 1); }
-  function nextMonth() { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else setCalMonth(m => m + 1); }
+  const prevMonth = useCallback(() => {
+    setCalMonth(m => { if (m === 0) { setCalYear(y => y - 1); return 11; } return m - 1; });
+  }, []);
+  const nextMonth = useCallback(() => {
+    setCalMonth(m => { if (m === 11) { setCalYear(y => y + 1); return 0; } return m + 1; });
+  }, []);
+
+  const slideAndChange = useCallback((dir: 1 | -1) => {
+    const w = 320;
+    api.start({ x: dir * -w, immediate: false, onRest: () => {
+      if (dir === 1) nextMonth(); else prevMonth();
+      api.set({ x: dir * w });
+      api.start({ x: 0 });
+    }});
+  }, [api, nextMonth, prevMonth]);
+
+  const bind = useDrag(
+    ({ offset: [ox], velocity: [vx], last, direction: [dx] }) => {
+      if (last) {
+        if (Math.abs(ox) > 50 || Math.abs(vx) > 0.4) {
+          slideAndChange(dx < 0 ? 1 : -1);
+        } else {
+          api.start({ x: 0 });
+        }
+      } else {
+        api.start({ x: ox, immediate: true });
+      }
+    },
+    { axis: 'x', filterTaps: true }
+  );
 
   function calDays() {
     const firstDow = new Date(calYear, calMonth, 1).getDay(), offset = (firstDow + 6) % 7;
@@ -28,23 +58,15 @@ export default function Calendar({ sessionsByDate, todayStr, onDayClick }: Calen
     return cells;
   }
 
-  function onTouchStart(e: React.TouchEvent) { swipeRef.current.x = e.touches[0].clientX; }
-  function onTouchEnd(e: React.TouchEvent) {
-    if (swipeRef.current.x === null) return;
-    const dx = e.changedTouches[0].clientX - swipeRef.current.x;
-    swipeRef.current.x = null;
-    if (Math.abs(dx) > 50) { if (dx < 0) nextMonth(); else prevMonth(); }
-  }
-
   return (
     <div style={{ margin: '0 var(--sp-8) var(--sp-14)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-7)' }}>
-        <button onClick={prevMonth} style={{ background: 'none', border: 'none', color: 'var(--text2)', fontSize: 'var(--text-3xl)', cursor: 'pointer', padding: 'var(--sp-1) var(--sp-5)', lineHeight: 1 }}>‹</button>
+        <button onClick={() => slideAndChange(-1)} style={{ background: 'none', border: 'none', color: 'var(--text2)', fontSize: 'var(--text-3xl)', cursor: 'pointer', padding: 'var(--sp-1) var(--sp-5)', lineHeight: 1 }}>‹</button>
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--text-xl)', letterSpacing: '.04em' }}>{MONTHS[calMonth]} {calYear}</div>
-        <button onClick={nextMonth} style={{ background: 'none', border: 'none', color: 'var(--text2)', fontSize: 'var(--text-3xl)', cursor: 'pointer', padding: 'var(--sp-1) var(--sp-5)', lineHeight: 1 }}>›</button>
+        <button onClick={() => slideAndChange(1)} style={{ background: 'none', border: 'none', color: 'var(--text2)', fontSize: 'var(--text-3xl)', cursor: 'pointer', padding: 'var(--sp-1) var(--sp-5)', lineHeight: 1 }}>›</button>
       </div>
 
-      <div className="cal-wrap cal-grid" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+      <animated.div {...bind()} style={{ x, touchAction: 'pan-y', userSelect: 'none' }} className="cal-grid">
         {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(d => <div key={d} className="cal-dow">{d}</div>)}
         {calDays().map((cell, i) => {
           if (!cell.cur) return <div key={i} className="cal-day other-month">{cell.d}</div>;
@@ -57,7 +79,7 @@ export default function Calendar({ sessionsByDate, todayStr, onDayClick }: Calen
           if (isFuture) cls += ' other-month';
           return <div key={i} className={cls} onClick={() => !isFuture && onDayClick(ds)}>{cell.d}</div>;
         })}
-      </div>
+      </animated.div>
 
       <div style={{ marginTop: 'var(--sp-5)', display: 'flex', gap: 'var(--sp-8)', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', fontSize: 'var(--text-xs)', color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>

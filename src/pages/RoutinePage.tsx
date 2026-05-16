@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
+import { animated } from '@react-spring/web';
 import type { AppData, Exercise } from '../types';
 import { uuid } from '../utils';
-import { useSwipeBack } from '../hooks/useSwipeBack';
+import { useSpringPage } from '../hooks/useSpringPage';
 import AddDayModal from '../modals/AddDayModal';
 import EditDayModal from '../modals/EditDayModal';
 import AddExerciseModal from '../modals/AddExerciseModal';
@@ -14,7 +15,7 @@ interface RoutinePageProps {
 }
 
 export default function RoutinePage({ data, persist, showToast, goBack }: RoutinePageProps) {
-  const swipeBack = useSwipeBack(goBack);
+  const { spring, bind, back } = useSpringPage({ onBack: goBack });
   const [addDayOpen, setAddDayOpen] = useState(false);
   const [addExDay, setAddExDay] = useState<string | null>(null);
   const [editDayNum, setEditDayNum] = useState<string | null>(null);
@@ -57,9 +58,9 @@ export default function RoutinePage({ data, persist, showToast, goBack }: Routin
   }
 
   return (
-    <div className="page" {...swipeBack}>
+    <animated.div className="page" {...bind()} style={{ x: spring.x }}>
       <div className="back-header">
-        <button className="back-btn" onClick={goBack}>←</button>
+        <button className="back-btn" onClick={back}>←</button>
         <h2>My Routine</h2>
         {dayNums.length < 5 && <button className="btn btn-accent btn-sm" style={{ marginLeft: 'auto' }} onClick={() => setAddDayOpen(true)}>+ Day</button>}
       </div>
@@ -111,6 +112,6 @@ export default function RoutinePage({ data, persist, showToast, goBack }: Routin
       {addDayOpen && <AddDayModal onClose={() => setAddDayOpen(false)} onSave={addDay} />}
       {addExDay && <AddExerciseModal dayNum={addExDay} dayName={data.routine[addExDay]?.name} onClose={() => setAddExDay(null)} onSave={ex => addExercise(addExDay, ex)} />}
       {editDayNum && <EditDayModal dayNum={editDayNum} currentName={data.routine[editDayNum]?.name || ''} onClose={() => setEditDayNum(null)} onSave={n => renameDay(editDayNum, n)} />}
-    </div>
+    </animated.div>
   );
 }

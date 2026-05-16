@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
+import { animated } from '@react-spring/web';
 import type { AppData } from '../types';
 import { uuid, fmtShort, todayDateStr } from '../utils';
-import { useSwipeBack } from '../hooks/useSwipeBack';
+import { useSpringPage } from '../hooks/useSpringPage';
 
 interface BodyWeightPageProps {
   data: AppData;
@@ -11,7 +12,7 @@ interface BodyWeightPageProps {
 }
 
 export default function BodyWeightPage({ data, persist, showToast, goBack }: BodyWeightPageProps) {
-  const swipeBack = useSwipeBack(goBack);
+  const { spring, bind, back } = useSpringPage({ onBack: goBack });
   const [logDate, setLogDate] = useState(todayDateStr());
   const [logWeight, setLogWeight] = useState('');
   const [photoData, setPhotoData] = useState<string | null>(null);
@@ -61,9 +62,9 @@ export default function BodyWeightPage({ data, persist, showToast, goBack }: Bod
   }
 
   return (
-    <div className="page" {...swipeBack}>
+    <animated.div className="page" {...bind()} style={{ x: spring.x }}>
       <div className="back-header">
-        <button className="back-btn" onClick={goBack}>←</button>
+        <button className="back-btn" onClick={back}>←</button>
         <h2>Body Weight</h2>
       </div>
       <div style={{ padding: 'var(--sp-8)' }}>
@@ -128,6 +129,6 @@ export default function BodyWeightPage({ data, persist, showToast, goBack }: Bod
           </div>
         </div>
       )}
-    </div>
+    </animated.div>
   );
 }

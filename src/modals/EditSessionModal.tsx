@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { AppData, Session, SessionEntry } from '../types';
 import ExerciseEntry from '../components/ExerciseEntry';
+import { BottomSheet } from '../components/ui/BottomSheet';
+import { Button } from '../components/ui/button';
 
 interface EditSessionModalProps {
   session: Session;
@@ -26,25 +28,22 @@ export default function EditSessionModal({ session, data, onSave, onClose }: Edi
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-handle" />
-        <div style={{ marginBottom: 'var(--sp-10)' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent2)', letterSpacing: '.09em', marginBottom: 'var(--sp-2)' }}>✏️ EDITING · {fmtDate.toUpperCase()}</div>
-          <div className="modal-title">{dayName || `Day ${session.dayNum}`}</div>
-          <div className="modal-sub">Tap an exercise to adjust numbers.</div>
-        </div>
-        {exercises.map(ex => (
-          <ExerciseEntry
-            key={ex.id}
-            exercise={ex}
-            entry={getEntry(ex.id)}
-            onUpdate={(field, val) => update(ex.id, field, val)}
-          />
-        ))}
-        <button className="btn btn-accent" style={{ width: '100%', padding: 'var(--sp-7)', marginTop: 'var(--sp-5)' }} onClick={() => onSave(entries)}>Save Changes</button>
-        <button className="btn btn-ghost" style={{ width: '100%', padding: 'var(--sp-6)', marginTop: 'var(--sp-5)' }} onClick={onClose}>Cancel</button>
+    <BottomSheet onClose={onClose}>
+      <div style={{ marginBottom: 'var(--sp-10)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-xs)', color: 'var(--accent2)', letterSpacing: '.09em', marginBottom: 'var(--sp-2)' }}>✏️ EDITING · {fmtDate.toUpperCase()}</div>
+        <div className="modal-title">{dayName || `Day ${session.dayNum}`}</div>
+        <div className="modal-sub">Tap an exercise to adjust numbers.</div>
       </div>
-    </div>
+      {exercises.map(ex => (
+        <ExerciseEntry
+          key={ex.id}
+          exercise={ex}
+          entry={getEntry(ex.id)}
+          onUpdate={(field, val) => update(ex.id, field, val)}
+        />
+      ))}
+      <Button className="w-full py-7 mt-3" onClick={() => onSave(entries)}>Save Changes</Button>
+      <Button variant="ghost" className="w-full py-6 mt-3" onClick={onClose}>Cancel</Button>
+    </BottomSheet>
   );
 }

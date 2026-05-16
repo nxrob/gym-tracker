@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
+import { animated } from '@react-spring/web';
 import type { AppData } from '../types';
 import { fmtShort } from '../utils';
-import { useSwipeBack } from '../hooks/useSwipeBack';
+import { useSpringPage } from '../hooks/useSpringPage';
 
 interface ExerciseDetailPageProps {
   data: AppData;
@@ -10,7 +11,7 @@ interface ExerciseDetailPageProps {
 }
 
 export default function ExerciseDetailPage({ data, exerciseId, goBack }: ExerciseDetailPageProps) {
-  const swipeBack = useSwipeBack(goBack);
+  const { spring, bind, back } = useSpringPage({ onBack: goBack });
 
   let ex: AppData['routine'][string]['exercises'][0] | null = null;
   for (const day of Object.values(data.routine)) {
@@ -31,16 +32,16 @@ export default function ExerciseDetailPage({ data, exerciseId, goBack }: Exercis
   const maxWeight = allEntries.length ? Math.max(...allEntries.map(e => e.weight || 0)) : null;
 
   if (!ex) return (
-    <div className="page" {...swipeBack}>
-      <div className="back-header"><button className="back-btn" onClick={goBack}>←</button><h2>Exercise</h2></div>
+    <animated.div className="page" {...bind()} style={{ x: spring.x }}>
+      <div className="back-header"><button className="back-btn" onClick={back}>←</button><h2>Exercise</h2></div>
       <div style={{ padding: '40px 16px', color: 'var(--text3)', textAlign: 'center' }}>Exercise not found.</div>
-    </div>
+    </animated.div>
   );
 
   return (
-    <div className="page" {...swipeBack}>
+    <animated.div className="page" {...bind()} style={{ x: spring.x }}>
       <div className="back-header">
-        <button className="back-btn" onClick={goBack}>←</button>
+        <button className="back-btn" onClick={back}>←</button>
         <h2>{ex.name}</h2>
       </div>
       <div style={{ padding: 'var(--sp-8)' }}>
@@ -83,6 +84,6 @@ export default function ExerciseDetailPage({ data, exerciseId, goBack }: Exercis
           ))}
         </div>
       </div>
-    </div>
+    </animated.div>
   );
 }
